@@ -6,10 +6,9 @@
 
 <p align="center">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
-<a href="https://github.com/krazylearner/kapital">GitHub</a> · <a href="https://github.com/krazylearner/kapital/issues">Issues</a>
 </p>
 
-<table>
+<table align="center">
   <tr>
     <td align="center"><img src="assets/brokers/groww.png" height="32" alt="Groww"><br><sub>Groww · supported</sub></td>
     <td align="center"><img src="assets/brokers/zerodha.svg" height="32" alt="Zerodha"><br><sub>Zerodha · planned</sub></td>
