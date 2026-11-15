@@ -722,3 +722,17 @@ table.why-table td {
     font-weight: bold;
   }
 }
+
+.title-bar-text {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.title-bar-logo {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex: none;
+  image-rendering: pixelated;
+}

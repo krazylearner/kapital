@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo.svg" width="72" height="72" alt="Kapital logo"></p>
+
 # Kapital
 
 **Your Groww P&L, XIRR and capital gains in 10 seconds — in your browser.**
