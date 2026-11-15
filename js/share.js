@@ -3,7 +3,7 @@
 
   const CONFIG = G.config || {};
   const BRAND = CONFIG.brand || 'Kapital';
-  const SITE_URL = CONFIG.siteUrl || 'https://kapital.tools';
+  const SITE_URL = CONFIG.siteUrl || 'https://kapital-abl.pages.dev';
   const SITE_HOST = SITE_URL.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
   const COLORS = {

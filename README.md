@@ -54,10 +54,10 @@ handling and sharing behave like production.
 
 ## Deploy
 
-The repo is static — no build command, no output directory, no environment
-variables.
+Static — no build command, no output directory, no environment variables.
+Live at **https://kapital-abl.pages.dev**
 
-### Cloudflare Pages (recommended)
+### Cloudflare Pages
 
 1. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**
 2. Pick `krazylearner/kapital`, production branch `main`
@@ -67,34 +67,38 @@ variables.
 The repo already ships:
 
 - `_headers` — CSP, HSTS, `nosniff`, referrer/permissions policy, cache rules
-- `_redirects` — `/index.html` → `/`, `pages.dev` and `www` → apex domain
-- `404.html` — returns a real 404 status with a styled page
+- `_redirects` — `/index.html` → `/`
+- `404.html` — real 404 status with a styled page
 
 ### GitHub Pages
 
 Settings → Pages → deploy from `main` / root. Note that GitHub Pages ignores
 `_headers` and `_redirects`; you keep `404.html` only.
 
-### Custom domain
+### No custom domain (for now)
 
-Add the custom domain in the Pages project, then create the DNS records at your
-registrar. This repo never touches DNS — that step is yours.
+`kapital.pages.dev` is taken by another Cloudflare account, so the project got
+the `kapital-abl` collision suffix. Everything points at
+`https://kapital-abl.pages.dev` — including the QR code baked into shared images.
 
-### After the domain is live
+If you buy a domain later: add it in the Pages project, create the DNS records at
+your registrar (this repo never touches DNS), then run:
 
-1. Update the domain in the four places listed below.
+```sh
+node tools/set-domain.js https://kapital-abl.pages.dev https://your-domain.tld
+```
+
+That rewrites `js/config.js`, `index.html`, `robots.txt`, `sitemap.xml` and
+`_redirects`. Then update the domain printed on the OG card in
+`tools/og-image.html` and regenerate `og-image.png` (open the file, click Save).
+
+### After the first deploy
+
+1. In Cloudflare, **disable Rocket Loader** and leave Bot Fight Mode off — both
+   break this app's JS and can block crawlers.
 2. Verify the site in Google Search Console and submit `/sitemap.xml`.
-3. In Cloudflare, **disable Rocket Loader** and leave Bot Fight Mode off for the
-   zone — both break this app's JS and can block crawlers.
-4. Make sure `og-image.png` resolves at the domain you put in `index.html`,
-   otherwise link previews will be blank.
-
-Before going live, set your domain in these four places:
-
-- `js/config.js` → `siteUrl` (share image QR code, caption, share links)
-- `index.html` → `canonical`, `og:url`, `og:image`, `twitter:image`, JSON-LD `url`
-- `robots.txt` → `Sitemap:`
-- `sitemap.xml` → `<loc>`
+3. Enable **Web Analytics** for the project if you want traffic numbers — it is
+   cookieless, so the "no tracking" claim stays true.
 
 ## Privacy
 
@@ -120,6 +124,7 @@ js/share.js       summary image, QR code, captions, share intents
 js/samples.js     sample exports for demos and tests
 js/app.js         UI wiring and rendering
 tools/og-image.html   regenerates og-image.png (open it, then click Save)
+tools/set-domain.js   swaps the domain across the four config files
 tools/share-preview.png  sample summary image for this README
 ```
 

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kapital.tools/sitemap.xml
+Sitemap: https://kapital-abl.pages.dev/sitemap.xml

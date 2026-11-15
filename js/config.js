@@ -4,7 +4,7 @@
   G.config = {
     brand: 'Kapital',
     tagline: 'P&L, XIRR and capital gains from Groww exports \u2014 in your browser',
-    siteUrl: 'https://kapital.tools',
+    siteUrl: 'https://kapital-abl.pages.dev',
     repo: 'https://github.com/krazylearner/kapital'
   };
 })();

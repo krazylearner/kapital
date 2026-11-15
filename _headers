@@ -5,13 +5,17 @@
   Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(), usb=()
   Cross-Origin-Opener-Policy: same-origin
   Strict-Transport-Security: max-age=31536000
+
+/
   Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data:; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
+  Cache-Control: public, max-age=0, must-revalidate
+
+/index.html
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data:; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
+  Cache-Control: public, max-age=0, must-revalidate
 
 /tools/*
   Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'
-
-/index.html
-  Cache-Control: public, max-age=0, must-revalidate
 
 /js/*
   Cache-Control: public, max-age=0, must-revalidate
