@@ -26,6 +26,28 @@ cookies, no backend.
 - Per-instrument and open-holdings tables
 - Shareable PNG summary + a QR/link back to the app
 
+## Kapital vs. ChatGPT, for this task
+
+A comparison for one job — turning a Groww export into P&L and capital-gains
+numbers — not a general review of ChatGPT. ChatGPT is better for explanations
+and conversation. [See the full comparison](https://kapital-abl.pages.dev/why-kapital).
+
+| What matters | Kapital | ChatGPT |
+| --- | :---: | :---: |
+| Your export stays on your device | ✅ | ❌ |
+| Repeatable, deterministic calculation | ✅ | ❌ |
+| No prompt writing | ✅ | ❌ |
+| Indian FY + 2024 STCG/LTCG rules built in | ✅ | ❌ |
+| Open-source, auditable calculation | ✅ | ❌ |
+| Free, no account | ✅ | ❌ |
+| Charts and shareable summary image | ✅ | ❌ |
+| General explanations and follow-up questions | ❌ | ✅ |
+
+✅ = built in / default. ❌ = not built in, not guaranteed, or requires
+uploading data / extra prompting.
+
+ChatGPT is a trademark of OpenAI. Kapital is not affiliated with OpenAI.
+
 ## Supported inputs
 
 Drag any combination of these into the app:

@@ -478,6 +478,13 @@
     };
   }
 
+  function loadSamples() {
+    G.samples.forEach(function (s) {
+      addFile(s.name, s.text);
+    });
+    rebuild();
+  }
+
   function bindEvents() {
     $('btn-open').addEventListener('click', function () {
       $('file-input').click();
@@ -488,12 +495,7 @@
       e.target.value = '';
     });
 
-    $('btn-sample').addEventListener('click', function () {
-      G.samples.forEach(function (s) {
-        addFile(s.name, s.text);
-      });
-      rebuild();
-    });
+    $('btn-sample').addEventListener('click', loadSamples);
 
     $('btn-clear').addEventListener('click', function () {
       state.files = [];
@@ -587,6 +589,24 @@
     });
   }
 
+  function autoLoadDemo() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('demo') !== '1') return;
+      loadSamples();
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.hash);
+      }
+      const dashboard = $('dashboard');
+      if (dashboard && dashboard.scrollIntoView) {
+        dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch (err) {
+      $('status').textContent = 'Could not load the sample data.';
+    }
+  }
+
   bindEvents();
   render();
+  autoLoadDemo();
 })();

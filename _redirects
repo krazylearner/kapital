@@ -1,5 +1,9 @@
 # Canonicalise the duplicate /index.html URL.
 /index.html  /  301
 
+# Canonicalise the comparison page URL.
+/why-kapital.html  /why-kapital  301
+/why-kapital/      /why-kapital  301
+
 # If a custom domain is added later, redirect the preview hostname to it:
 # https://kapital-abl.pages.dev/*  https://your-domain.tld/:splat  301

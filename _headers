@@ -14,6 +14,18 @@
   Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data: https://cloudflareinsights.com; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
   Cache-Control: public, max-age=0, must-revalidate
 
+/why-kapital
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data: https://cloudflareinsights.com; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
+  Cache-Control: public, max-age=0, must-revalidate
+
+/why-kapital.html
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data: https://cloudflareinsights.com; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
+  Cache-Control: public, max-age=0, must-revalidate
+
+/why-kapital/
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data: https://cloudflareinsights.com; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
+  Cache-Control: public, max-age=0, must-revalidate
+
 /tools/*
   Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self'; frame-ancestors 'none'
 

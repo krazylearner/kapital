@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="ChatGPT is great for explanations. Kapital turns Groww exports into repeatable FY P&amp;L, XIRR and capital-gains estimates without uploading your file. See the difference.">
+<title>Why Kapital instead of ChatGPT &mdash; private Groww P&amp;L analyzer</title>
+<meta name="theme-color" content="#008080">
+<link rel="canonical" href="https://kapital-abl.pages.dev/why-kapital">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kapital">
+<meta property="og:title" content="Why Kapital instead of ChatGPT">
+<meta property="og:description" content="ChatGPT is great for explaining tax ideas. Kapital is built to turn your Groww export into numbers you can check, file and share &mdash; without uploading your file.">
+<meta property="og:url" content="https://kapital-abl.pages.dev/why-kapital">
+<meta property="og:image" content="https://kapital-abl.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why Kapital instead of ChatGPT">
+<meta name="twitter:description" content="ChatGPT is great for explaining tax ideas. Kapital is built to turn your Groww export into numbers you can check, file and share &mdash; without uploading your file.">
+<meta name="twitter:image" content="https://kapital-abl.pages.dev/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I just upload my Groww CSV to ChatGPT?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can, and it may do a reasonable job. But your holdings leave your device, you have to check every number, and the answer can change between chats. Kapital runs the same fixed calculation on the same file."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Kapital upload anything?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Parsing, calculation, charts and the share image all run in your browser. There is no backend. The only external requests are the page's own assets and anonymous page-view counts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Kapital free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Kapital is free, needs no account, and the code is MIT licensed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are the tax numbers exact?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "They are estimates. Kapital handles the 23 July 2024 STCG and LTCG change and lets you edit rates and exemptions, but confirm the final figures with your chartered accountant."
+      }
+    }
+  ]
+}
+</script>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://unpkg.com/98.css">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="why-page">
+<div class="window app-window why-window">
+  <div class="title-bar">
+    <div class="title-bar-text">Kapital &mdash; Why not ChatGPT?</div>
+    <div class="title-bar-controls">
+      <button aria-label="Minimize" disabled></button>
+      <button aria-label="Maximize" disabled></button>
+      <button aria-label="Close" disabled></button>
+    </div>
+  </div>
+  <main class="window-body">
+    <nav class="why-nav" aria-label="Breadcrumb">
+      <a href="/">&larr; Back to the app</a>
+      <span aria-hidden="true">&middot;</span>
+      <span>Why Kapital vs ChatGPT</span>
+    </nav>
+
+    <header class="why-hero">
+      <h1>Why not just ask ChatGPT?</h1>
+      <p class="why-lede">ChatGPT is excellent for explaining tax ideas. Kapital is built for one narrow job: turning the Groww export you already have into numbers you can check, file and share &mdash; without your file leaving this browser.</p>
+      <ul class="why-badges">
+        <li>No upload</li>
+        <li>No login</li>
+        <li>Free</li>
+        <li>Open source</li>
+      </ul>
+      <div class="why-actions">
+        <a class="why-btn" href="/?demo=1">Try it with sample data</a>
+        <a class="why-btn why-btn-secondary" href="/">Open the app</a>
+      </div>
+      <p class="note">No Groww export handy? The sample uses fictional data.</p>
+    </header>
+
+    <section class="why-section" aria-labelledby="short-answer">
+      <h2 id="short-answer">The short answer</h2>
+      <div class="why-cards">
+        <article class="why-card">
+          <div class="why-card-num">01 &middot; Privacy</div>
+          <h3>Your file stays on your computer</h3>
+          <p>A chatbot needs your export uploaded to its servers before it can read it. Kapital opens the file inside this browser tab. There is no server to send it to.</p>
+        </article>
+        <article class="why-card">
+          <div class="why-card-num">02 &middot; Trust</div>
+          <h3>Same file, same answer</h3>
+          <p>Chat answers can change between conversations, so you have to re-check the maths. Kapital applies fixed FIFO and tax rules every time, and the code is public.</p>
+        </article>
+        <article class="why-card">
+          <div class="why-card-num">03 &middot; Speed</div>
+          <h3>No prompt writing, no waiting</h3>
+          <p>You do not need to explain what each column means. Drop the CSV or Excel file you download from Groww and read the dashboard in seconds.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="why-section" aria-labelledby="compare">
+      <h2 id="compare">ChatGPT vs Kapital, for this job</h2>
+      <p>This is a comparison for one task &mdash; analysing a Groww export &mdash; not a general review of ChatGPT. It is not a knock on ChatGPT: for explanations and conversation, it is the better tool.</p>
+      <div class="table-scroll why-table-wrap">
+        <table class="pnl why-table">
+          <caption>What changes when you use a calculator instead of a chat</caption>
+          <thead>
+            <tr>
+              <th scope="col">What matters</th>
+              <th scope="col">ChatGPT</th>
+              <th scope="col">Kapital</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Where your data goes</th>
+              <td data-label="ChatGPT">Uploaded to OpenAI&rsquo;s servers to be processed</td>
+              <td data-label="Kapital" class="why-good">Read inside this browser tab; nothing is uploaded</td>
+            </tr>
+            <tr>
+              <th scope="row">Repeatable result</th>
+              <td data-label="ChatGPT">Can change between chats; you must check the maths</td>
+              <td data-label="Kapital" class="why-good">Same file, same numbers, every time</td>
+            </tr>
+            <tr>
+              <th scope="row">Getting started</th>
+              <td data-label="ChatGPT">Write a prompt and explain your export&rsquo;s columns</td>
+              <td data-label="Kapital" class="why-good">Drop the file you already download from Groww</td>
+            </tr>
+            <tr>
+              <th scope="row">Indian FY and tax rules</th>
+              <td data-label="ChatGPT">You must specify FY, STCG/LTCG and the 23 Jul 2024 change</td>
+              <td data-label="Kapital" class="why-good">Built in, with editable rates</td>
+            </tr>
+            <tr>
+              <th scope="row">Audit the calculation</th>
+              <td data-label="ChatGPT">Closed model; you cannot inspect the steps</td>
+              <td data-label="Kapital" class="why-good">Open source, MIT licensed</td>
+            </tr>
+            <tr>
+              <th scope="row">Account and cost</th>
+              <td data-label="ChatGPT">Account required; file analysis may depend on the plan</td>
+              <td data-label="Kapital" class="why-good">Free; no account, no subscription</td>
+            </tr>
+            <tr>
+              <th scope="row">Output</th>
+              <td data-label="ChatGPT">Text first; ask again for tables, charts and images</td>
+              <td data-label="Kapital" class="why-good">FY tables, charts and a shareable PNG</td>
+            </tr>
+            <tr>
+              <th scope="row">General explanations and follow-ups</th>
+              <td data-label="ChatGPT">Excellent</td>
+              <td data-label="Kapital">Not what Kapital is for</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">ChatGPT may handle a simple P&amp;L question well. The point is not that it is always wrong; the point is that a financial calculation you can file should be repeatable, auditable and private.</p>
+    </section>
+
+    <section class="why-section" aria-labelledby="chatgpt-wins">
+      <h2 id="chatgpt-wins">Where ChatGPT is the better choice</h2>
+      <div class="why-callout">
+        <strong>Use ChatGPT to understand. Use Kapital to calculate.</strong>
+        <p>ChatGPT is better for explaining what STCG and LTCG mean, talking through a tax idea, or drafting a note to your CA. Kapital will not chat with you and does not give advice. It takes your file and returns the same numbers every time.</p>
+      </div>
+    </section>
+
+    <section class="why-section why-proof" aria-labelledby="what-you-get">
+      <div>
+        <h2 id="what-you-get">What you get</h2>
+        <p>Everything below comes from the files you drop in. No live prices are fetched.</p>
+        <ul class="why-list">
+          <li>Realized P&amp;L with FIFO lot matching, charges and split/bonus handling</li>
+          <li>Unrealized P&amp;L from holdings exports</li>
+          <li>Indian financial-year breakdown (April&ndash;March)</li>
+          <li>XIRR across buys, sells and open holdings</li>
+          <li>STCG/LTCG estimates, including the 23 Jul 2024 regime change</li>
+          <li>Per-instrument and open-holdings tables</li>
+          <li>A shareable PNG summary with a QR link back to the app</li>
+        </ul>
+        <p class="note">Supported: Groww P&amp;L report, capital gains report, holdings export, equity tradebook and mutual fund statement.</p>
+      </div>
+      <figure class="why-figure">
+        <img class="why-shot" src="/tools/share-preview.png" width="2160" height="2988" alt="Example Kapital summary with P&amp;L cards, financial-year chart, top gainers and losers, and a QR code">
+        <figcaption class="note">An example summary image generated in the browser.</figcaption>
+      </figure>
+    </section>
+
+    <section class="why-section" aria-labelledby="verify">
+      <h2 id="verify">You do not have to take our word for it</h2>
+      <ol class="why-steps">
+        <li>Open your browser&rsquo;s developer tools (press F12) and choose the <strong>Network</strong> tab.</li>
+        <li>Load your Groww export in the app.</li>
+        <li>Watch the requests. None of them carry your file, its name or the numbers calculated from it.</li>
+      </ol>
+      <details class="why-faq">
+        <summary>What requests does the page make?</summary>
+        <p>Only the page&rsquo;s own files: this page, the stylesheet, the app&rsquo;s scripts and the chart/Excel libraries. The site also loads Cloudflare Web Analytics for anonymous page-view counts; it does not receive file contents, filenames or results. There is no backend.</p>
+      </details>
+      <p class="note">The full source is on <a href="https://github.com/krazylearner/kapital" target="_blank" rel="noopener noreferrer">GitHub</a>, MIT licensed.</p>
+    </section>
+
+    <section class="why-section" aria-labelledby="limits">
+      <h2 id="limits">Honest limits</h2>
+      <ul class="why-limits">
+        <li><strong>Estimates, not tax advice.</strong> Verify the numbers with your chartered accountant before filing.</li>
+        <li><strong>No live prices.</strong> Unrealized P&amp;L uses the prices in your holdings export.</li>
+        <li><strong>Groww exports only for now.</strong> Zerodha, Upstox and others are on the roadmap.</li>
+        <li><strong>It is a calculator, not a chatbot.</strong> It will not answer general questions or give investment advice.</li>
+      </ul>
+    </section>
+
+    <section class="why-section" aria-labelledby="faq">
+      <h2 id="faq">Common questions</h2>
+      <details class="why-faq">
+        <summary>Can I just upload my Groww CSV to ChatGPT?</summary>
+        <p>You can, and it may do a reasonable job. But your holdings leave your device, you have to check every number, and the answer can change between chats. Kapital runs the same fixed calculation on the same file.</p>
+      </details>
+      <details class="why-faq">
+        <summary>Does Kapital upload anything?</summary>
+        <p>No. Parsing, calculation, charts and the share image all run in your browser. There is no backend. The only external requests are page assets and anonymous page views.</p>
+      </details>
+      <details class="why-faq">
+        <summary>Is Kapital free?</summary>
+        <p>Yes. It is free, needs no account, and the code is MIT licensed.</p>
+      </details>
+      <details class="why-faq">
+        <summary>Are the tax numbers exact?</summary>
+        <p>They are estimates. The app handles the 23 Jul 2024 STCG/LTCG change and lets you edit rates and exemptions, but confirm the final figures with your CA.</p>
+      </details>
+      <details class="why-faq">
+        <summary>What if I do not use Groww?</summary>
+        <p>Groww exports are the only supported format for now. The parser is open source if someone wants to add another broker.</p>
+      </details>
+    </section>
+
+    <footer class="app-footer">
+      <p>Kapital is an independent, unofficial tool. Not affiliated with Groww. Tax figures are estimates &mdash; verify with your chartered accountant before filing.</p>
+      <p>ChatGPT is a trademark of OpenAI. Kapital is not affiliated with OpenAI.</p>
+      <p class="footer-links"><a href="/">Open the app</a> &middot; <a href="https://github.com/krazylearner/kapital" target="_blank" rel="noopener noreferrer">Open source on GitHub</a> &middot; MIT licensed</p>
+    </footer>
+  </main>
+  <div class="status-bar">
+    <p class="status-bar-field">Privacy first</p>
+    <p class="status-bar-field">No upload &middot; No login &middot; Free</p>
+  </div>
+</div>
+<script src="/js/config.js"></script>
+<script src="/js/analytics.js"></script>
+</body>
+</html>
