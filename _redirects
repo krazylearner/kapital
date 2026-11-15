@@ -1,0 +1,6 @@
+# Canonicalise the duplicate /index.html URL.
+/index.html  /  301
+
+# Send the preview hostname to the real domain once DNS is live.
+https://kapital.pages.dev/*  https://kapital.tools/:splat  301
+https://www.kapital.tools/*  https://kapital.tools/:splat  301
