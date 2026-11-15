@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/logo.svg" width="72" height="72" alt="Kapital logo"></p>
+<p align="center"><a href="https://kapital-abl.pages.dev"><img src="assets/logo.svg" width="72" height="72" alt="Kapital logo"></a></p>
 
 <h1 align="center">Kapital</h1>
 
