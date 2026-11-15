@@ -27,8 +27,6 @@ cookies, no backend.
 > shown above; their names and logos are trademarks of their respective
 > owners. Tax figures are estimates — verify with your CA before filing.
 
-![Kapital share summary](tools/share-preview.png)
-
 ## What it does
 
 - Realized P&L with FIFO lot matching, charges and split/bonus handling
