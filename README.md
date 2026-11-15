@@ -43,8 +43,7 @@ cookies, no backend.
 ## Kapital vs. ChatGPT, for this task
 
 A comparison for one job — turning a Groww export into P&L and capital-gains
-numbers — not a general review of ChatGPT. ChatGPT is better for explanations
-and conversation. [See the full comparison](https://kapital-abl.pages.dev/why-kapital).
+numbers. [See the full comparison](https://kapital-abl.pages.dev/why-kapital).
 
 | What matters | Kapital | ChatGPT |
 | --- | :---: | :---: |
@@ -84,9 +83,6 @@ No build step, no dependencies to install:
 python -m http.server 8080
 # open http://localhost:8080
 ```
-
-Opening `index.html` directly also works, but a local server makes file
-handling and sharing behave like production.
 
 ## Demo
 
