@@ -5,13 +5,27 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [GitHub](https://github.com/krazylearner/kapital) · [Issues](https://github.com/krazylearner/kapital/issues)
 
+<table>
+  <tr>
+    <td align="center"><img src="assets/brokers/groww.png" height="32" alt="Groww"><br><sub>Groww · supported</sub></td>
+    <td align="center"><img src="assets/brokers/zerodha.svg" height="32" alt="Zerodha"><br><sub>Zerodha · planned</sub></td>
+    <td align="center"><img src="assets/brokers/upstox.svg" height="22" alt="Upstox"><br><sub>Upstox · planned</sub></td>
+    <td align="center"><img src="assets/brokers/indmoney.svg" height="32" alt="INDmoney"><br><sub>INDmoney · planned</sub></td>
+    <td align="center"><img src="assets/brokers/icicibank.svg" height="32" alt="ICICI Direct"><br><sub>ICICI Direct · planned</sub></td>
+  </tr>
+</table>
+
+Groww exports work today. Zerodha, Upstox, INDmoney and ICICI Direct are
+planned — see [Contributing](#contributing).
+
 Kapital reads Groww CSV/XLSX exports and turns them into FY-wise realized and
 unrealized P&L, ROI, XIRR and capital-gains tax estimates — then renders a
 shareable summary image. Everything runs client-side: no upload, no login, no
 cookies, no backend.
 
-> Unofficial and independent. Not affiliated with Groww. Tax figures are
-> estimates — verify with your CA before filing.
+> Unofficial and independent. Not affiliated with Groww or any other broker
+> shown above; their names and logos are trademarks of their respective
+> owners. Tax figures are estimates — verify with your CA before filing.
 
 ![Kapital share summary](tools/share-preview.png)
 
