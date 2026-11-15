@@ -1,11 +1,13 @@
 <p align="center"><img src="assets/logo.svg" width="72" height="72" alt="Kapital logo"></p>
 
-# Kapital
+<h1 align="center">Kapital</h1>
 
-**Your Groww P&L, XIRR and capital gains in 10 seconds — in your browser.**
+<p align="center"><strong>Your Groww P&L, XIRR and capital gains in 10 seconds — in your browser.</strong></p>
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[GitHub](https://github.com/krazylearner/kapital) · [Issues](https://github.com/krazylearner/kapital/issues)
+<p align="center">
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+<a href="https://github.com/krazylearner/kapital">GitHub</a> · <a href="https://github.com/krazylearner/kapital/issues">Issues</a>
+</p>
 
 <table>
   <tr>
