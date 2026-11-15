@@ -1,0 +1,200 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Free, private P&amp;L and capital gains analyzer for Groww exports. Realized and unrealized P&amp;L, ROI, XIRR and tax estimates by Indian financial year. Runs entirely in your browser &mdash; no upload, no login.">
+<title>Kapital &mdash; Groww P&amp;L &amp; Capital Gains Analyzer</title>
+<meta name="theme-color" content="#008080">
+<link rel="canonical" href="https://kapital.tools/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kapital">
+<meta property="og:title" content="Kapital &mdash; your Groww P&amp;L and capital gains in 10 seconds">
+<meta property="og:description" content="Drop your Groww CSV/XLSX exports. Get FY-wise P&amp;L, XIRR and capital gains tax estimates. Nothing leaves your browser.">
+<meta property="og:url" content="https://kapital.tools/">
+<meta property="og:image" content="https://kapital.tools/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kapital &mdash; your Groww P&amp;L and capital gains in 10 seconds">
+<meta name="twitter:description" content="Drop your Groww CSV/XLSX exports. FY-wise P&amp;L, XIRR and capital gains tax estimates. Nothing leaves your browser.">
+<meta name="twitter:image" content="https://kapital.tools/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Kapital",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any (browser)",
+  "url": "https://kapital.tools/",
+  "description": "Client-side P&L, XIRR and capital gains analyzer for Groww equity and mutual fund exports.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+}
+</script>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://unpkg.com/98.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="window app-window">
+  <div class="title-bar">
+    <div class="title-bar-text">Kapital &mdash; P&amp;L Analyzer</div>
+    <div class="title-bar-controls">
+      <button aria-label="Minimize" disabled></button>
+      <button aria-label="Maximize" disabled></button>
+      <button aria-label="Close" disabled></button>
+    </div>
+  </div>
+  <main class="window-body">
+    <div class="toolbar">
+      <button id="btn-open" type="button">Open files&hellip;</button>
+      <button id="btn-sample" type="button">Load sample data</button>
+      <button id="btn-settings" type="button">Tax settings&hellip;</button>
+      <button id="btn-share" type="button">Share&hellip;</button>
+      <button id="btn-clear" type="button">Clear all</button>
+      <span class="toolbar-hint">Files are processed in your browser only &mdash; nothing is uploaded or saved.</span>
+    </div>
+
+    <input type="file" id="file-input" multiple accept=".csv,.txt,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+
+    <fieldset class="dropzone" id="dropzone">
+      <legend>Input</legend>
+      <p><strong>Drag &amp; drop your Groww CSV or Excel exports here</strong> or click &ldquo;Open files&hellip;&rdquo;.</p>
+      <p class="hint-text">Supports Groww CSV / XLSX exports: P&amp;L report, capital gains report, holdings export, equity tradebook and mutual fund statements. Multiple files can be combined.</p>
+    </fieldset>
+
+    <div class="panel hidden" id="files-panel">
+      <fieldset>
+        <legend>Loaded files</legend>
+        <div id="file-list"></div>
+      </fieldset>
+    </div>
+
+    <div class="panel hidden" id="warnings-panel">
+      <fieldset>
+        <legend>Warnings</legend>
+        <ul class="warnings" id="warnings-list"></ul>
+      </fieldset>
+    </div>
+
+    <div id="dashboard" class="hidden">
+      <fieldset>
+        <legend>Summary</legend>
+        <div class="cards" id="cards"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Financial year breakdown (April&ndash;March)</legend>
+        <div class="table-scroll"><table class="pnl" id="fy-table"></table></div>
+        <p class="note" id="tax-note"></p>
+      </fieldset>
+
+      <div class="cols two">
+        <fieldset>
+          <legend>Per instrument &mdash; realized</legend>
+          <div class="table-scroll"><table class="pnl" id="instr-table"></table></div>
+        </fieldset>
+        <fieldset>
+          <legend>Open holdings &mdash; unrealized</legend>
+          <div class="table-scroll"><table class="pnl" id="hold-table"></table></div>
+          <p class="note" id="hold-note"></p>
+        </fieldset>
+      </div>
+
+      <fieldset>
+        <legend>Charts</legend>
+        <div class="charts">
+          <div class="chart-box wide"><canvas id="ch-fy"></canvas></div>
+          <div class="chart-box wide"><canvas id="ch-cum"></canvas></div>
+          <div class="chart-box wide"><canvas id="ch-top"></canvas></div>
+        </div>
+        <p class="note" id="chart-note"></p>
+      </fieldset>
+    </div>
+
+    <footer class="app-footer">
+      <p>Kapital is an independent, unofficial tool. Not affiliated with Groww. Tax figures are estimates &mdash; verify with your chartered accountant before filing.</p>
+      <p class="footer-links"><a href="https://github.com/krazylearner/kapital" target="_blank" rel="noopener noreferrer">Open source on GitHub</a> &middot; MIT licensed</p>
+      <details>
+        <summary>How you can verify nothing is uploaded</summary>
+        <p>Open your browser&rsquo;s developer tools, switch to the Network tab, then load your exports. You will see no requests carrying your data: parsing, calculation, charts and the share image are all done in this tab. The only network requests are for the page&rsquo;s own assets. We do not use cookies or analytics scripts that read files.</p>
+      </details>
+    </footer>
+  </main>
+  <div class="status-bar">
+    <p class="status-bar-field" id="status">Ready</p>
+    <p class="status-bar-field" id="status-files">No files loaded</p>
+  </div>
+</div>
+
+<div class="window modal hidden" id="settings-modal">
+  <div class="title-bar">
+    <div class="title-bar-text">Tax settings</div>
+    <div class="title-bar-controls">
+      <button aria-label="Close" id="settings-x" type="button"></button>
+    </div>
+  </div>
+  <div class="window-body">
+    <p class="note">Estimates only. Rates apply per sale date: transfers on/after 23 Jul 2024 use the new regime, earlier transfers use legacy rates.</p>
+    <div class="section-title">Equity &amp; equity mutual funds</div>
+    <div class="settings-grid">
+      <label for="set-stcg">STCG rate (%)</label><input id="set-stcg" type="number" step="0.1" min="0">
+      <label for="set-ltcg">LTCG rate (%)</label><input id="set-ltcg" type="number" step="0.1" min="0">
+      <label for="set-exempt">LTCG exemption (&#8377;)</label><input id="set-exempt" type="number" step="1000" min="0">
+      <label for="set-lstcg">Legacy STCG rate (%)</label><input id="set-lstcg" type="number" step="0.1" min="0">
+      <label for="set-lltcg">Legacy LTCG rate (%)</label><input id="set-lltcg" type="number" step="0.1" min="0">
+      <label for="set-lexempt">Legacy LTCG exemption (&#8377;)</label><input id="set-lexempt" type="number" step="1000" min="0">
+    </div>
+    <div class="section-title">Debt mutual funds</div>
+    <div class="settings-grid">
+      <label for="set-debtlt">LTCG rate (%)</label><input id="set-debtlt" type="number" step="0.1" min="0">
+      <label for="set-ldebtlt">Legacy LTCG rate (%)</label><input id="set-ldebtlt" type="number" step="0.1" min="0">
+      <label for="set-slab">Slab rate for STCG (%)</label><input id="set-slab" type="number" step="0.1" min="0">
+    </div>
+    <div class="modal-actions">
+      <button id="settings-reset" type="button">Reset defaults</button>
+      <span class="spacer"></span>
+      <button id="settings-apply" type="button">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div class="window modal hidden" id="share-modal">
+  <div class="title-bar">
+    <div class="title-bar-text">Share summary</div>
+    <div class="title-bar-controls">
+      <button aria-label="Close" id="share-x" type="button"></button>
+    </div>
+  </div>
+  <div class="window-body">
+    <div class="share-preview"><img id="share-img" alt="Shareable P&amp;L summary image"></div>
+    <p class="note" id="share-note">The image is generated in your browser.</p>
+    <div class="modal-actions">
+      <button id="share-native" type="button">Share image&hellip;</button>
+      <button id="share-download" type="button">Download image</button>
+      <button id="share-copy" type="button">Copy caption</button>
+      <span class="spacer"></span>
+    </div>
+    <div class="section-title">Share to</div>
+    <div class="share-links" id="share-links"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="js/config.js"></script>
+<script src="js/csv.js"></script>
+<script src="js/parsers.js"></script>
+<script src="js/calc.js"></script>
+<script src="js/samples.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/share.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
+
+
+
+
+

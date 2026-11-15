@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kapital — og-image generator</title>
+<link rel="stylesheet" href="https://unpkg.com/98.css">
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #008080; }
+  body {
+    width: 1200px;
+    height: 630px;
+    box-sizing: border-box;
+    padding: 28px;
+    font-family: "MS Sans Serif", Tahoma, "Segoe UI", sans-serif;
+    overflow: hidden;
+  }
+  .card {
+    height: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #000;
+    box-shadow: inset -1px -1px 0 #808080, inset 1px 1px 0 #fff, 2px 2px 0 rgba(0,0,0,.25);
+    display: flex;
+    flex-direction: column;
+  }
+  .bar {
+    background: #000080;
+    color: #fff;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 4px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .bar .btns { display: flex; gap: 2px; }
+  .bar .btns span {
+    display: inline-block;
+    width: 16px; height: 14px;
+    background: #c0c0c0;
+    border: 1px solid #000;
+    box-shadow: inset -1px -1px 0 #808080, inset 1px 1px 0 #fff;
+  }
+  .inner { flex: 1; padding: 34px 40px 24px; display: flex; flex-direction: column; }
+  h1 { margin: 0; font-size: 76px; letter-spacing: -1px; }
+  .tag { margin: 6px 0 0; font-size: 27px; color: #333; }
+  .tiles { display: flex; gap: 16px; margin-top: 30px; }
+  .tile {
+    flex: 1;
+    background: #efefef;
+    border: 1px solid #808080;
+    box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #a0a0a0;
+    padding: 18px 18px 20px;
+  }
+  .tile b { display: block; font-size: 27px; color: #000080; }
+  .tile span { display: block; font-size: 16px; color: #444; margin-top: 4px; }
+  .steps {
+    margin-top: 34px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 20px;
+    color: #333;
+    border-top: 1px solid #c0c0c0;
+    padding-top: 24px;
+  }
+  .steps b { font-weight: normal; }
+  .steps em { font-style: normal; color: #000080; font-weight: bold; }
+  .checks { margin-top: 18px; display: flex; gap: 26px; font-size: 17px; color: #007000; font-weight: bold; }
+  .checks span::before { content: "\2713"; margin-right: 7px; }
+  .foot { margin-top: auto; padding-top: 24px; display: flex; align-items: flex-end; justify-content: space-between; }
+  .foot p { margin: 0; font-size: 17px; color: #444; max-width: 760px; line-height: 1.45; }
+  .url { text-align: right; }
+  .url b { display: block; font-size: 30px; color: #000080; }
+  .url span { font-size: 14px; color: #666; }
+  .badges { margin-top: 10px; font-size: 14px; color: #007000; font-weight: bold; }
+  .badges i { font-style: normal; color: #666; font-weight: normal; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="bar">
+    <span>Kapital — P&amp;L Analyzer</span>
+    <span class="btns"><span></span><span></span><span></span></span>
+  </div>
+  <div class="inner">
+    <h1>Kapital</h1>
+    <p class="tag">Your Groww P&amp;L, XIRR and capital gains in 10 seconds.</p>
+
+    <div class="tiles">
+      <div class="tile"><b>FY-wise P&amp;L</b><span>April–March breakdown</span></div>
+      <div class="tile"><b>XIRR</b><span>on every cashflow</span></div>
+      <div class="tile"><b>Capital gains</b><span>tax estimates, incl. 2024 rules</span></div>
+    </div>
+
+    <div class="steps">
+      <b>1. Export CSV/XLSX from Groww</b>
+      <em>&#8594;</em>
+      <b>2. Drop the files in</b>
+      <em>&#8594;</em>
+      <b>3. Get P&amp;L, XIRR and tax</b>
+    </div>
+
+    <div class="checks">
+      <span>No upload</span>
+      <span>No login</span>
+      <span>No backend</span>
+      <span>Free</span>
+    </div>
+
+    <div class="foot">
+      <div>
+        <p>Parsing, charts and the share image all happen in your browser. Your exports never leave the tab.</p>
+        <div class="badges">Unofficial and independent <i>· not affiliated with Groww · tax figures are estimates</i></div>
+      </div>
+      <div class="url">
+        <b>kapital.tools</b>
+        <span>static, open source</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+function renderPng() {
+  return html2canvas(document.body, {
+    width: 1200,
+    height: 630,
+    windowWidth: 1200,
+    windowHeight: 630,
+    backgroundColor: '#008080',
+    scale: 1,
+    logging: false
+  });
+}
+
+document.addEventListener('click', function (e) {
+  if (e.target && e.target.id === 'save') {
+    renderPng().then(function (c) {
+      var a = document.createElement('a');
+      a.href = c.toDataURL('image/png');
+      a.download = 'og-image.png';
+      a.click();
+    });
+  }
+});
+
+if (location.search.indexOf('save=1') !== -1) {
+  window.addEventListener('load', function () {
+    var go = function () {
+      renderPng().then(function (c) {
+        c.toBlob(function (blob) {
+          fetch('/__save', { method: 'POST', body: blob }).then(function () {
+            document.title = 'SAVED';
+          });
+        }, 'image/png');
+      });
+    };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(go);
+    else go();
+  });
+}
+</script>
+</body>
+</html>
