@@ -52,16 +52,9 @@ python -m http.server 8080
 Opening `index.html` directly also works, but a local server makes file
 handling and sharing behave like production.
 
-## Deploy
+## Demo
 
-Static — no build command, no output directory, no environment variables.
-Live at **https://kapital-abl.pages.dev**
-
-The repo already ships:
-
-- `_headers` — CSP, HSTS, `nosniff`, referrer/permissions policy, cache rules
-- `_redirects` — `/index.html` → `/`
-- `404.html` — real 404 status with a styled page
+Fully functional demo: **https://kapital-abl.pages.dev**
 
 ## Privacy
 
