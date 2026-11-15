@@ -7,11 +7,11 @@
   Strict-Transport-Security: max-age=31536000
 
 /
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data:; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data: https://cloudflareinsights.com; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
   Cache-Control: public, max-age=0, must-revalidate
 
 /index.html
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data:; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://cdn.jsdelivr.net https://cdn.sheetjs.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: blob:; font-src 'self' data: https://unpkg.com; connect-src 'self' blob: data: https://cloudflareinsights.com; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests
   Cache-Control: public, max-age=0, must-revalidate
 
 /tools/*

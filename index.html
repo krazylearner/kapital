@@ -117,7 +117,7 @@
       <p class="footer-links"><a href="https://github.com/krazylearner/kapital" target="_blank" rel="noopener noreferrer">Open source on GitHub</a> &middot; MIT licensed</p>
       <details>
         <summary>How you can verify nothing is uploaded</summary>
-        <p>Open your browser&rsquo;s developer tools, switch to the Network tab, then load your exports. You will see no requests carrying your data: parsing, calculation, charts and the share image are all done in this tab. The only network requests are for the page&rsquo;s own assets. We do not use cookies or analytics scripts that read files.</p>
+        <p>Open your browser&rsquo;s developer tools, switch to the Network tab, then load your exports. You will see no requests carrying your data: parsing, calculation, charts and the share image are all done in this tab. The only network requests are for the page&rsquo;s own assets. The only thing recorded is an anonymous page-view count (Cloudflare Web Analytics, no cookies) &mdash; never your files, filenames or their contents.</p>
       </details>
     </footer>
   </main>
@@ -191,6 +191,7 @@
 <script src="js/charts.js"></script>
 <script src="js/share.js"></script>
 <script src="js/app.js"></script>
+<script src="js/analytics.js"></script>
 </body>
 </html>
 

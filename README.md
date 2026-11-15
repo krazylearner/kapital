@@ -108,6 +108,10 @@ Verify it yourself: open DevTools → Network, load your exports, and watch that
 no request carries them. The only external requests are the CDN assets
 (98.css, Chart.js, SheetJS, qrcode-generator).
 
+The site loads Cloudflare Web Analytics (`js/analytics.js`) for cookieless
+page-view counts. It never sees file contents, filenames or computed numbers.
+Set `analytics.beaconToken` in `js/config.js` to an empty string to disable it.
+
 ## Project layout
 
 ```
