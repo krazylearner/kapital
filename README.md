@@ -70,36 +70,6 @@ The repo already ships:
 - `_redirects` — `/index.html` → `/`
 - `404.html` — real 404 status with a styled page
 
-### GitHub Pages
-
-Settings → Pages → deploy from `main` / root. Note that GitHub Pages ignores
-`_headers` and `_redirects`; you keep `404.html` only.
-
-### No custom domain (for now)
-
-`kapital.pages.dev` is taken by another Cloudflare account, so the project got
-the `kapital-abl` collision suffix. Everything points at
-`https://kapital-abl.pages.dev` — including the QR code baked into shared images.
-
-If you buy a domain later: add it in the Pages project, create the DNS records at
-your registrar (this repo never touches DNS), then run:
-
-```sh
-node tools/set-domain.js https://kapital-abl.pages.dev https://your-domain.tld
-```
-
-That rewrites `js/config.js`, `index.html`, `robots.txt`, `sitemap.xml` and
-`_redirects`. Then update the domain printed on the OG card in
-`tools/og-image.html` and regenerate `og-image.png` (open the file, click Save).
-
-### After the first deploy
-
-1. In Cloudflare, **disable Rocket Loader** and leave Bot Fight Mode off — both
-   break this app's JS and can block crawlers.
-2. Verify the site in Google Search Console and submit `/sitemap.xml`.
-3. Enable **Web Analytics** for the project if you want traffic numbers — it is
-   cookieless, so the "no tracking" claim stays true.
-
 ## Privacy
 
 Parsing, calculation, charts and image generation all happen in `js/*.js` in
@@ -111,26 +81,6 @@ no request carries them. The only external requests are the CDN assets
 The site loads Cloudflare Web Analytics (`js/analytics.js`) for cookieless
 page-view counts. It never sees file contents, filenames or computed numbers.
 Set `analytics.beaconToken` in `js/config.js` to an empty string to disable it.
-
-## Project layout
-
-```
-index.html        shell, SEO/OG metadata, dialogs
-404.html          styled 404
-_headers          CSP, HSTS, security and cache headers (Cloudflare Pages)
-_redirects        301 rules (Cloudflare Pages)
-css/style.css     Win98-themed styling
-js/config.js      brand, domain, repo — edit this first
-js/parsers.js     CSV/XLSX detection and normalization
-js/calc.js        FIFO matching, FY aggregation, XIRR, tax estimates
-js/charts.js      in-app charts
-js/share.js       summary image, QR code, captions, share intents
-js/samples.js     sample exports for demos and tests
-js/app.js         UI wiring and rendering
-tools/og-image.html   regenerates og-image.png (open it, then click Save)
-tools/set-domain.js   swaps the domain across the four config files
-tools/share-preview.png  sample summary image for this README
-```
 
 ## Contributing
 
