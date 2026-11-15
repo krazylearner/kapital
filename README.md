@@ -57,13 +57,6 @@ handling and sharing behave like production.
 Static — no build command, no output directory, no environment variables.
 Live at **https://kapital-abl.pages.dev**
 
-### Cloudflare Pages
-
-1. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**
-2. Pick `krazylearner/kapital`, production branch `main`
-3. Framework preset **None**, build command **empty**, output directory **`/`**
-4. Deploy. Every push to `main` redeploys; every PR gets a preview URL.
-
 The repo already ships:
 
 - `_headers` — CSP, HSTS, `nosniff`, referrer/permissions policy, cache rules
