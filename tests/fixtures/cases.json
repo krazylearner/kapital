@@ -1,0 +1,155 @@
+{
+  "today": "2026-11-16T00:00:00",
+  "cases": [
+    {
+      "name": "groww-samples",
+      "description": "the four in-app sample exports combined",
+      "samples": [
+        "sample_equity_pl_report.csv",
+        "sample_mf_statement.csv",
+        "sample_holdings.csv",
+        "sample_capital_gains.csv"
+      ],
+      "expect": {
+        "ledgerRows": 22,
+        "kinds": { "BUY": 4, "SELL": 2, "ROUNDTRIP": 9, "HOLDING": 7 },
+        "flags": { "needs_isin": 3 },
+        "warningCount": 0,
+        "empty": false,
+        "fyCount": 3,
+        "fys": [
+          { "label": "FY 2024-25", "netPL": 13740, "tax": 791 },
+          { "label": "FY 2025-26", "netPL": 5360, "tax": 0 },
+          { "label": "FY 2026-27", "netPL": 18455.2, "tax": 2951 }
+        ],
+        "totals": {
+          "invested": 256519.75,
+          "proceeds": 294399.96,
+          "charges": 325,
+          "netPL": 37555.2,
+          "stNet": 18710,
+          "ltNet": 18845.2,
+          "tax": 3742
+        },
+        "xirr": 0.657004
+      }
+    },
+    {
+      "name": "equity-new-regime",
+      "description": "post-Jul-2024 equity ST and LT, new rates and 1.25L exemption",
+      "files": ["tests/fixtures/equity-new-regime.csv"],
+      "expect": {
+        "ledgerRows": 2,
+        "kinds": { "ROUNDTRIP": 2 },
+        "warningCount": 0,
+        "fyCount": 1,
+        "fys": [{ "label": "FY 2024-25", "netPL": 304880, "tax": 22858.5 }],
+        "totals": {
+          "invested": 110000,
+          "proceeds": 415000,
+          "charges": 120,
+          "netPL": 304880,
+          "stNet": 4980,
+          "ltNet": 299900,
+          "tax": 22858.5
+        },
+        "xirr": 1.000428
+      }
+    },
+    {
+      "name": "equity-legacy",
+      "description": "pre-Jul-2024 equity with legacy rates and 1L exemption",
+      "files": ["tests/fixtures/equity-legacy.csv"],
+      "expect": {
+        "ledgerRows": 2,
+        "kinds": { "ROUNDTRIP": 2 },
+        "warningCount": 0,
+        "fyCount": 1,
+        "fys": [{ "label": "FY 2023-24", "netPL": 14950, "tax": 747 }],
+        "totals": {
+          "invested": 20000,
+          "proceeds": 35000,
+          "charges": 50,
+          "netPL": 14950,
+          "stNet": 4980,
+          "ltNet": 9970,
+          "tax": 747
+        },
+        "xirr": 0.688062
+      }
+    },
+    {
+      "name": "debt-mf",
+      "description": "debt MF short-term slab and 24-month long-term threshold",
+      "files": ["tests/fixtures/debt-mf.csv"],
+      "expect": {
+        "ledgerRows": 2,
+        "kinds": { "ROUNDTRIP": 2 },
+        "warningCount": 0,
+        "fyCount": 1,
+        "fys": [{ "label": "FY 2024-25", "netPL": 594, "tax": 108.9 }],
+        "totals": {
+          "invested": 2000,
+          "proceeds": 2600,
+          "charges": 6,
+          "netPL": 594,
+          "stNet": 198,
+          "ltNet": 396,
+          "tax": 108.9
+        },
+        "xirr": 0.208369
+      }
+    },
+    {
+      "name": "missing-fields",
+      "description": "rows missing purchase date or quantity are skipped with actionable warnings",
+      "files": ["tests/fixtures/missing-fields.csv"],
+      "expect": {
+        "ledgerRows": 1,
+        "kinds": { "ROUNDTRIP": 1 },
+        "warningCount": 2,
+        "warningsInclude": [
+          "missing-fields.csv: Skipped Missing Date Ltd: missing purchase date.",
+          "missing-fields.csv: Skipped No Qty Ltd: missing quantity."
+        ],
+        "fyCount": 1,
+        "fys": [{ "label": "FY 2024-25", "netPL": 195, "tax": 39 }],
+        "totals": {
+          "invested": 1000,
+          "proceeds": 1200,
+          "charges": 5,
+          "netPL": 195,
+          "stNet": 195,
+          "ltNet": 0,
+          "tax": 39
+        },
+        "xirr": 0.435726
+      }
+    },
+    {
+      "name": "loss-carryforward",
+      "description": "FY 2023-24 short-term loss set off against FY 2024-25 short-term gain",
+      "files": ["tests/fixtures/loss-carryforward.csv"],
+      "expect": {
+        "ledgerRows": 2,
+        "kinds": { "ROUNDTRIP": 2 },
+        "warningCount": 0,
+        "fyCount": 2,
+        "fys": [
+          { "label": "FY 2023-24", "netPL": -5000, "tax": 0 },
+          { "label": "FY 2024-25", "netPL": 5000, "tax": 0 }
+        ],
+        "totals": {
+          "invested": 30000,
+          "proceeds": 30000,
+          "charges": 0,
+          "netPL": 0,
+          "stNet": 0,
+          "ltNet": 0,
+          "tax": 0
+        },
+        "xirr": 0
+      }
+    }
+  ]
+}
