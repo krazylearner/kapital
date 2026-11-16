@@ -339,9 +339,10 @@
     input = input || {};
     const s = Object.assign({}, DEFAULTS, input.settings || {});
     const warnings = (input.warnings || []).slice();
-    const trades = input.trades || [];
-    const roundtrips = input.roundtrips || [];
-    const holdingsIn = input.holdings || [];
+    const derived = input.ledger && G.ledger ? G.ledger.toCalcInput(input.ledger) : null;
+    const trades = derived ? derived.trades : (input.trades || []);
+    const roundtrips = derived ? derived.roundtrips : (input.roundtrips || []);
+    const holdingsIn = derived ? derived.holdings : (input.holdings || []);
 
     const fifo = trades.length ? fifoRealize(trades, warnings) : { events: [], open: [] };
     const tradeKeys = new Set(trades.map(function (t) { return t.isin || t.instrument; }));

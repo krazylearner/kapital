@@ -6,6 +6,7 @@
     files: [],
     settings: Object.assign({}, G.calc.defaults),
     result: null,
+    ledger: [],
     sort: { key: 'netPL', dir: -1 }
   };
 
@@ -120,7 +121,8 @@
   }
 
   function rebuild() {
-    const acc = { trades: [], roundtrips: [], holdings: [], warnings: [] };
+    const acc = { warnings: [] };
+    let ledger = [];
 
     state.files.forEach(function (f) {
       f.error = null;
@@ -133,19 +135,19 @@
         parsed.warnings.forEach(function (w) {
           acc.warnings.push(f.name + ': ' + w);
         });
-        acc.trades = acc.trades.concat(parsed.trades);
-        acc.roundtrips = acc.roundtrips.concat(parsed.roundtrips);
-        acc.holdings = acc.holdings.concat(parsed.holdings);
+        ledger = ledger.concat(G.ledger.fromParsed(parsed, {
+          id: f.id,
+          file: f.name,
+          type: parsed.type
+        }));
       } catch (err) {
         f.error = err.message;
       }
     });
 
-    const hasInput = acc.trades.length || acc.roundtrips.length || acc.holdings.length;
-    state.result = hasInput ? G.calc.compute({
-      trades: acc.trades,
-      roundtrips: acc.roundtrips,
-      holdings: acc.holdings,
+    state.ledger = ledger;
+    state.result = ledger.length ? G.calc.compute({
+      ledger: ledger,
       warnings: acc.warnings,
       settings: state.settings
     }) : null;
@@ -501,6 +503,7 @@
     $('btn-clear').addEventListener('click', function () {
       state.files = [];
       state.result = null;
+      state.ledger = [];
       render();
     });
 
