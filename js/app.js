@@ -419,6 +419,7 @@
       renderInstrTable(r);
       renderHoldTable(r);
       renderCharts(r);
+      if (G.harvest) G.harvest.render(r, state.settings);
     } else if (G.charts) {
       G.charts.clear();
     }

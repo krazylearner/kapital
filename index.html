@@ -106,6 +106,20 @@
         </fieldset>
       </div>
 
+      <fieldset id="harvest-panel">
+        <legend>Tax-loss harvesting simulator</legend>
+        <p class="note">Book unrealized losses before 31 March to cut this year&rsquo;s capital-gains tax. India has no wash-sale rule, so you can sell and rebuy to reset cost. Estimates only.</p>
+        <div class="harvest-controls">
+          <label for="harvest-fy">Financial year</label>
+          <select id="harvest-fy"></select>
+          <button id="harvest-all" type="button">Select all losses</button>
+          <button id="harvest-none" type="button">Clear selection</button>
+        </div>
+        <div class="cards" id="harvest-cards"></div>
+        <div class="table-scroll"><table class="pnl" id="harvest-table"></table></div>
+        <p class="note" id="harvest-note"></p>
+      </fieldset>
+
       <fieldset>
         <legend>Charts</legend>
         <div class="charts">
@@ -194,6 +208,7 @@
 <script src="js/calc.js"></script>
 <script src="js/samples.js"></script>
 <script src="js/charts.js"></script>
+<script src="js/harvest.js"></script>
 <script src="js/share.js"></script>
 <script src="js/app.js"></script>
 <script src="js/analytics.js"></script>

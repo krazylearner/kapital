@@ -102,6 +102,7 @@
           assetClass: lot.assetClass,
           qty: lot.remaining,
           avgCost: lot.price,
+          date: lot.date,
           currentPrice: null,
           currentValue: null
         });
@@ -162,7 +163,12 @@
     fileHoldings.forEach(add);
     openLots.forEach(function (lot) {
       const key = lot.isin || lot.instrument;
-      if (!map.has(key)) map.set(key, Object.assign({}, lot, { currentValue: null }));
+      if (!map.has(key)) {
+        map.set(key, Object.assign({}, lot, { currentValue: null }));
+      } else {
+        const row = map.get(key);
+        if (!row.date && lot.date) row.date = lot.date;
+      }
     });
     return Array.from(map.values());
   }
@@ -272,7 +278,7 @@
     });
   }
 
-  function applyTax(fys, s, warnings) {
+  function applyTax(fys, s, warnings, stats) {
     let carryLt = [];
     let carrySt = [];
 
@@ -317,6 +323,10 @@
 
     const leftoverLt = carryLt.reduce(function (a, c) { return a + c.amount; }, 0);
     const leftoverSt = carrySt.reduce(function (a, c) { return a + c.amount; }, 0);
+    if (stats) {
+      stats.unusedLt = leftoverLt;
+      stats.unusedSt = leftoverSt;
+    }
     if (leftoverLt > 0.005) {
       warnings.push('Unused long-term capital loss of ' + round2(leftoverLt) + ' remains after the loaded financial years; it can be carried forward for up to 8 years and set off only against long-term gains.');
     }
@@ -578,5 +588,87 @@
     };
   }
 
-  G.calc = { compute: compute, defaults: DEFAULTS, fyOf: fyOf, fyLabel: fyLabel, xirr: xirr };
+  function cloneBucket(b) {
+    function copy(c) {
+      return { gain: c.gain, loss: c.loss };
+    }
+    return {
+      eqSt: copy(b.eqSt),
+      eqLt: copy(b.eqLt),
+      debtSt: copy(b.debtSt),
+      debtLt: copy(b.debtLt)
+    };
+  }
+
+  function cloneFys(fys) {
+    return (fys || []).map(function (f) {
+      return {
+        startYear: f.startYear,
+        label: f.label,
+        invested: f.invested,
+        proceeds: f.proceeds,
+        grossPL: f.grossPL,
+        charges: f.charges,
+        netPL: f.netPL,
+        stNet: f.stNet,
+        ltNet: f.ltNet,
+        events: f.events,
+        tax: 0,
+        pat: f.netPL,
+        roi: f.roi,
+        regimes: {
+          new: cloneBucket(f.regimes.new),
+          legacy: cloneBucket(f.regimes.legacy)
+        }
+      };
+    });
+  }
+
+  function simulateHarvest(fys, settings, startYear, extra) {
+    const s = Object.assign({}, DEFAULTS, settings || {});
+    extra = extra || {};
+    const base = cloneFys(fys);
+    const baseStats = {};
+    applyTax(base, s, [], baseStats);
+
+    const sim = cloneFys(fys);
+    const target = sim.filter(function (f) { return f.startYear === startYear; })[0];
+    if (target) {
+      const b = target.regimes.new;
+      b.eqLt.loss += extra.ltLoss || 0;
+      b.eqSt.loss += extra.stLoss || 0;
+    }
+    const simStats = {};
+    applyTax(sim, s, [], simStats);
+
+    const baseFY = base.filter(function (f) { return f.startYear === startYear; })[0];
+    const simFY = sim.filter(function (f) { return f.startYear === startYear; })[0];
+    const totalBase = base.reduce(function (a, f) { return a + f.tax; }, 0);
+    const totalSim = sim.reduce(function (a, f) { return a + f.tax; }, 0);
+
+    return {
+      startYear: startYear,
+      found: !!target,
+      baselineTax: baseFY ? baseFY.tax : 0,
+      simulatedTax: simFY ? simFY.tax : 0,
+      taxSaved: (baseFY ? baseFY.tax : 0) - (simFY ? simFY.tax : 0),
+      totalBaselineTax: totalBase,
+      totalSimulatedTax: totalSim,
+      totalTaxSaved: totalBase - totalSim,
+      carriedLt: Math.max(0, (simStats.unusedLt || 0) - (baseStats.unusedLt || 0)),
+      carriedSt: Math.max(0, (simStats.unusedSt || 0) - (baseStats.unusedSt || 0)),
+      baselineFY: baseFY || null,
+      simulatedFY: simFY || null
+    };
+  }
+
+  G.calc = {
+    compute: compute,
+    defaults: DEFAULTS,
+    fyOf: fyOf,
+    fyLabel: fyLabel,
+    xirr: xirr,
+    isLongTerm: isLongTerm,
+    simulateHarvest: simulateHarvest
+  };
 })();

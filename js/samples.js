@@ -8,6 +8,7 @@
     'Reliance Industries Ltd,INE002A01018,15,2024-01-05,2600.00,2025-02-10,2900.00,,55',
     'Tata Motors Ltd,INE155A01022,30,2025-09-10,950.00,2026-03-05,880.00,,65',
     'Wipro Ltd,INE075A01022,40,2024-06-20,450.00,2025-09-15,530.00,,40',
+    'Bajaj Finance Ltd,INE296A01024,10,2025-12-01,7000.00,2026-08-15,8500.00,,50',
     'HDFC Bank Ltd,INE040A01034,25,2025-06-01,1650.00,,,1780.00,0',
     'ITC Ltd,INE154A01025,50,2024-02-12,410.00,,,465.00,0'
   ].join('\n');
@@ -26,7 +27,9 @@
     'Instrument,ISIN,Quantity,Average Cost,Current Price,Current Value',
     'Mirae Asset Large Cap Fund - Direct Growth,INF769K01AX2,150,98.30,112.40,16860.00',
     'HDFC Bank Ltd,INE040A01034,25,1650.00,1780.00,44500.00',
-    'ITC Ltd,INE154A01025,50,410.00,465.00,23250.00'
+    'ITC Ltd,INE154A01025,50,410.00,465.00,23250.00',
+    'Zomato Ltd,INE758T01015,100,280.00,215.00,21500.00',
+    'ICICI Prudential Nifty Next 50 Index Fund - Direct Growth,INF109K01Z48,200,52.00,46.00,9200.00'
   ].join('\n');
 
   const capitalGains = [

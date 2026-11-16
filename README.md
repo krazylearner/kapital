@@ -39,6 +39,8 @@ cookies, no backend.
 - Capital-gains tax estimates, including the 23 Jul 2024 regime change
   (legacy vs current STCG/LTCG rates, equity/debt, LTCG exemption)
 - Per-instrument and open-holdings tables
+- Tax-loss harvesting simulator: select open losses and see the effect on this
+  financial year's estimated tax
 - Shareable PNG summary + a QR/link back to the app
 
 ## Kapital vs. ChatGPT, for this task
