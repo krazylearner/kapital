@@ -294,6 +294,53 @@ fieldset,
   font-size: 11px;
 }
 
+.isin-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 4px 0;
+  border-bottom: 1px dotted #a0a0a0;
+  font-size: 11px;
+}
+
+.isin-row:last-child {
+  border-bottom: 0;
+}
+
+.isin-main {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.isin-main strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.isin-meta {
+  color: #333;
+}
+
+.isin-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.isin-actions input {
+  width: 130px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.isin-suggest {
+  color: #333;
+}
+
 .status-bar {
   position: fixed;
   left: 0;

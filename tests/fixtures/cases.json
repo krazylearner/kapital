@@ -14,6 +14,15 @@
         "ledgerRows": 22,
         "kinds": { "BUY": 4, "SELL": 2, "ROUNDTRIP": 9, "HOLDING": 7 },
         "flags": { "needs_isin": 3 },
+        "isin": {
+          "total": 22,
+          "exported": 19,
+          "mapped": 0,
+          "manual": 0,
+          "suggested": 0,
+          "missing": 3,
+          "invalid": 0
+        },
         "warningCount": 0,
         "empty": false,
         "fyCount": 3,
@@ -98,6 +107,108 @@
           "tax": 108.9
         },
         "xirr": 0.208369
+      }
+    },
+    {
+      "name": "isin-resolver",
+      "description": "blank ISINs resolve by symbol and normalised name; fuzzy matches stay suggestions",
+      "files": ["tests/fixtures/isin-resolver.csv"],
+      "expect": {
+        "ledgerRows": 5,
+        "kinds": { "ROUNDTRIP": 5 },
+        "flags": { "needs_isin": 2 },
+        "warningCount": 0,
+        "isin": {
+          "total": 5,
+          "exported": 0,
+          "mapped": 3,
+          "manual": 0,
+          "suggested": 1,
+          "missing": 2,
+          "invalid": 0
+        },
+        "isinRows": [
+          { "instrument": "Infosys Ltd", "isin": "INE009A01021", "source": "map", "confidence": "name", "suggestion": null },
+          { "instrument": "INFY", "isin": "INE009A01021", "source": "map", "confidence": "symbol", "suggestion": null },
+          { "instrument": "Parag Parikh Flexi Cap Fund - Direct Growth", "isin": "INF204KA1MS3", "source": "map", "confidence": "name", "suggestion": null },
+          { "instrument": "Infosis Ltd", "isin": null, "source": null, "confidence": null, "suggestion": "INE009A01021" },
+          { "instrument": "Mystery Industries Ltd", "isin": null, "source": null, "confidence": null, "suggestion": null }
+        ]
+      }
+    },
+    {
+      "name": "isin-manual",
+      "description": "session-only manual override fills a security the bundled map does not know",
+      "files": ["tests/fixtures/isin-resolver.csv"],
+      "manual": {
+        "Mystery Industries Ltd": "INE999A01001"
+      },
+      "expect": {
+        "ledgerRows": 5,
+        "kinds": { "ROUNDTRIP": 5 },
+        "flags": { "needs_isin": 1 },
+        "warningCount": 0,
+        "isin": {
+          "total": 5,
+          "exported": 0,
+          "mapped": 3,
+          "manual": 1,
+          "suggested": 1,
+          "missing": 1,
+          "invalid": 0
+        },
+        "isinRows": [
+          { "instrument": "Mystery Industries Ltd", "isin": "INE999A01001", "source": "manual", "confidence": "manual", "suggestion": null }
+        ]
+      }
+    },
+    {
+      "name": "isin-invalid",
+      "description": "a malformed stated ISIN is flagged instead of being silently accepted",
+      "files": ["tests/fixtures/isin-invalid.csv"],
+      "expect": {
+        "ledgerRows": 1,
+        "kinds": { "ROUNDTRIP": 1 },
+        "flags": { "invalid_isin": 1 },
+        "warningCount": 0,
+        "isin": {
+          "total": 1,
+          "exported": 1,
+          "mapped": 0,
+          "manual": 0,
+          "suggested": 0,
+          "missing": 0,
+          "invalid": 1
+        },
+        "isinRows": [
+          { "instrument": "Bad Isin Ltd", "isin": "BAD123", "source": "export", "confidence": null, "suggestion": null }
+        ]
+      }
+    },
+    {
+      "name": "isin-invalid-manual",
+      "description": "a manual override repairs a malformed stated ISIN",
+      "files": ["tests/fixtures/isin-invalid.csv"],
+      "manual": {
+        "Bad Isin Ltd": "INE111A01019"
+      },
+      "expect": {
+        "ledgerRows": 1,
+        "kinds": { "ROUNDTRIP": 1 },
+        "flags": { "invalid_isin": 0 },
+        "warningCount": 0,
+        "isin": {
+          "total": 1,
+          "exported": 0,
+          "mapped": 0,
+          "manual": 1,
+          "suggested": 0,
+          "missing": 0,
+          "invalid": 0
+        },
+        "isinRows": [
+          { "instrument": "Bad Isin Ltd", "isin": "INE111A01019", "source": "manual", "confidence": "manual", "suggestion": null }
+        ]
       }
     },
     {

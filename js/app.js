@@ -7,6 +7,7 @@
     settings: Object.assign({}, G.calc.defaults),
     result: null,
     ledger: [],
+    isinGroups: {},
     sort: { key: 'netPL', dir: -1 }
   };
 
@@ -145,6 +146,7 @@
       }
     });
 
+    if (G.isin) G.isin.applyToLedger(ledger);
     state.ledger = ledger;
     state.result = ledger.length ? G.calc.compute({
       ledger: ledger,
@@ -183,6 +185,101 @@
         '<button class="mini-btn" type="button" data-remove="' + f.id + '">Remove</button>' +
         '</div>';
     }).join('');
+  }
+
+  function renderIsinReview() {
+    const panel = $('isin-panel');
+    const list = $('isin-list');
+    const note = $('isin-note');
+    if (!panel || !list || !G.isin) return;
+
+    const groups = {};
+    (state.ledger || []).forEach(function (row) {
+      if (!row.instrument) return;
+      const flags = row.flags || [];
+      const needs = flags.indexOf('needs_isin') >= 0;
+      const invalid = flags.indexOf('invalid_isin') >= 0;
+      if (!needs && !invalid && row.isinSource !== 'manual') return;
+      const key = G.isin.normalizeName(row.instrument);
+      if (!key) return;
+      let g = groups[key];
+      if (!g) {
+        g = groups[key] = {
+          key: key,
+          name: row.instrument,
+          rows: 0,
+          files: {},
+          isin: null,
+          source: null,
+          suggestion: null,
+          needs: false,
+          invalid: false
+        };
+      }
+      g.rows += 1;
+      if (row.sourceFile) g.files[row.sourceFile] = true;
+      if (row.isin) g.isin = row.isin;
+      if (row.isinSource) g.source = row.isinSource;
+      if (!g.suggestion && row.isinSuggestion) g.suggestion = row.isinSuggestion;
+      if (needs) g.needs = true;
+      if (invalid) g.invalid = true;
+    });
+
+    const keys = Object.keys(groups).sort(function (a, b) {
+      return groups[a].name.localeCompare(groups[b].name);
+    });
+    state.isinGroups = groups;
+
+    if (!keys.length) {
+      panel.classList.add('hidden');
+      list.innerHTML = '';
+      note.textContent = '';
+      return;
+    }
+
+    let unresolved = 0;
+    let manualCount = 0;
+    let invalidCount = 0;
+    keys.forEach(function (k) {
+      if (groups[k].needs) unresolved += 1;
+      if (groups[k].source === 'manual') manualCount += 1;
+      if (groups[k].invalid) invalidCount += 1;
+    });
+
+    panel.classList.remove('hidden');
+    list.innerHTML = keys.map(function (k) {
+      const g = groups[k];
+      const files = Object.keys(g.files).join(', ');
+      const manual = g.source === 'manual';
+      const meta = [];
+      if (files) meta.push(esc(files));
+      meta.push(g.rows + ' row' + (g.rows === 1 ? '' : 's'));
+      if (manual) meta.push('manual override');
+      if (g.invalid) meta.push('invalid ISIN');
+
+      let actions = '';
+      if (g.suggestion && !manual) {
+        actions += '<span class="isin-suggest">Match: ' + esc(g.suggestion.name) +
+          ' (' + esc(g.suggestion.isin) + ', ' + Math.round(g.suggestion.score * 100) + '% similar)</span>' +
+          '<button class="mini-btn" type="button" data-isin-suggest="' + esc(k) + '">Use match</button>';
+      }
+      actions += '<input type="text" maxlength="12" placeholder="INE..." aria-label="ISIN for ' + esc(g.name) + '"' +
+        ' data-isin-input="' + esc(k) + '" value="' + esc(manual || g.invalid ? g.isin : '') + '">' +
+        '<button class="mini-btn" type="button" data-isin-apply="' + esc(k) + '">' +
+        (manual || g.invalid ? 'Change' : 'Set ISIN') + '</button>';
+
+      return '<div class="isin-row">' +
+        '<div class="isin-main"><strong title="' + esc(g.name) + '">' + esc(g.name) + '</strong>' +
+        '<span class="isin-meta">' + meta.join(' \u00B7 ') + '</span></div>' +
+        '<div class="isin-actions">' + actions + '</div>' +
+        '</div>';
+    }).join('');
+
+    const parts = [];
+    if (unresolved) parts.push(unresolved + ' securit' + (unresolved === 1 ? 'y' : 'ies') + ' still need' + (unresolved === 1 ? 's' : '') + ' an ISIN');
+    if (manualCount) parts.push(manualCount + ' manual override' + (manualCount === 1 ? '' : 's'));
+    if (invalidCount) parts.push(invalidCount + ' invalid ISIN' + (invalidCount === 1 ? '' : 's'));
+    note.textContent = parts.join('; ') + '. ISINs are filled from a bundled public map; matches and overrides stay on this device and last for this session only.';
   }
 
   function renderWarnings(result) {
@@ -411,6 +508,7 @@
     renderFiles();
     const r = state.result;
     renderWarnings(r);
+    renderIsinReview();
 
     const hasData = r && !r.empty;
     $('dashboard').classList.toggle('hidden', !hasData);
@@ -504,6 +602,7 @@
       state.files = [];
       state.result = null;
       state.ledger = [];
+      state.isinGroups = {};
       render();
     });
 
@@ -578,6 +677,41 @@
         if (f.id === id) f.override = sel.value;
       });
       rebuild();
+    });
+
+    $('isin-list').addEventListener('click', function (e) {
+      const suggestBtn = e.target.closest('button[data-isin-suggest]');
+      const applyBtn = e.target.closest('button[data-isin-apply]');
+      if (!suggestBtn && !applyBtn) return;
+      const btn = suggestBtn || applyBtn;
+      const key = btn.getAttribute(suggestBtn ? 'data-isin-suggest' : 'data-isin-apply');
+      const group = (state.isinGroups || {})[key];
+      if (!group) return;
+      let value = '';
+      if (suggestBtn) {
+        value = group.suggestion ? group.suggestion.isin : '';
+      } else {
+        const row = btn.closest('.isin-row');
+        const input = row ? row.querySelector('input[data-isin-input]') : null;
+        value = input ? input.value : '';
+      }
+      const result = G.isin.setManual(group.name, value);
+      if (!result.ok) {
+        $('status').textContent = result.error;
+        return;
+      }
+      rebuild();
+      $('status').textContent = 'ISIN ' + (result.cleared ? 'override cleared' : 'override applied for this session') + '.';
+    });
+
+    $('isin-list').addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' || !e.target.matches('input[data-isin-input]')) return;
+      const row = e.target.closest('.isin-row');
+      const btn = row ? row.querySelector('button[data-isin-apply]') : null;
+      if (btn) {
+        e.preventDefault();
+        btn.click();
+      }
     });
 
     $('instr-table').addEventListener('click', function (e) {

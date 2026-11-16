@@ -8,7 +8,7 @@ const vm = require('vm');
 const ROOT = path.resolve(__dirname, '..');
 const FIXTURES = path.join(ROOT, 'tests', 'fixtures');
 const CASES = path.join(FIXTURES, 'cases.json');
-const SCRIPTS = ['js/csv.js', 'js/samples.js', 'js/parsers.js', 'js/ledger.js', 'js/calc.js'];
+const SCRIPTS = ['js/csv.js', 'js/samples.js', 'js/parsers.js', 'js/ledger.js', 'js/isin-map.js', 'js/calc.js'];
 const NUM_TOL = 0.01;
 const XIRR_TOL = 1e-6;
 
@@ -73,6 +73,13 @@ function runCase(G, c) {
     }));
   });
 
+  Object.keys(c.manual || {}).forEach(function (name) {
+    const res = G.isin.setManual(name, c.manual[name]);
+    if (!res.ok) throw new Error('Bad manual ISIN for ' + name + ': ' + res.error);
+  });
+
+  const isin = G.isin.applyToLedger(ledger);
+
   const result = G.calc.compute({
     ledger: ledger,
     warnings: warnings,
@@ -94,6 +101,16 @@ function runCase(G, c) {
     flags: flags,
     warningCount: warnings.length,
     warnings: warnings,
+    isin: isin,
+    isinRows: ledger.map(function (row) {
+      return {
+        instrument: row.instrument,
+        isin: row.isin || null,
+        source: row.isinSource || null,
+        confidence: row.isinConfidence || null,
+        suggestion: row.isinSuggestion ? row.isinSuggestion.isin : null
+      };
+    }),
     empty: result.empty,
     fyCount: result.fys.length,
     fys: result.fys.map(function (f) {
@@ -153,6 +170,23 @@ function validate(c, observed) {
   });
   Object.keys(e.flags || {}).forEach(function (flag) {
     compare('flags.' + flag, observed.flags[flag] || 0, e.flags[flag], null, failures);
+  });
+  Object.keys(e.isin || {}).forEach(function (key) {
+    compare('isin.' + key, observed.isin ? observed.isin[key] : null, e.isin[key], null, failures);
+  });
+  (e.isinRows || []).forEach(function (expected) {
+    const actual = observed.isinRows.filter(function (row) {
+      return row.instrument === expected.instrument;
+    })[0];
+    if (!actual) {
+      failures.push('isinRows[' + expected.instrument + ']: not found');
+      return;
+    }
+    ['isin', 'source', 'confidence', 'suggestion'].forEach(function (key) {
+      if (expected[key] !== undefined) {
+        compare('isinRows[' + expected.instrument + '].' + key, actual[key], expected[key], null, failures);
+      }
+    });
   });
   compareTotals('totals', observed.totals, e.totals, failures);
 
