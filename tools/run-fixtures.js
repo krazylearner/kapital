@@ -8,7 +8,7 @@ const vm = require('vm');
 const ROOT = path.resolve(__dirname, '..');
 const FIXTURES = path.join(ROOT, 'tests', 'fixtures');
 const CASES = path.join(FIXTURES, 'cases.json');
-const SCRIPTS = ['js/csv.js', 'js/export.js', 'js/samples.js', 'js/parsers.js', 'js/ledger.js', 'js/isin-map.js', 'js/calc.js'];
+const SCRIPTS = ['js/csv.js', 'js/export.js', 'js/samples.js', 'js/parsers.js', 'js/ledger.js', 'js/isin-map.js', 'js/calc.js', 'js/itr.js'];
 const NUM_TOL = 0.01;
 const XIRR_TOL = 1e-6;
 
@@ -320,6 +320,193 @@ function runExportSuite(show) {
   return failed;
 }
 
+function runItrCase(G, c) {
+  G.itr.reset();
+  const entries = fixtureEntries(G, c);
+  let ledger = [];
+
+  entries.forEach(function (entry, i) {
+    const parsed = G.parsers.parseText(entry.text, {
+      name: entry.name,
+      override: c.override || 'AUTO'
+    });
+    ledger = ledger.concat(G.ledger.fromParsed(parsed, {
+      id: i + 1,
+      file: entry.name,
+      type: parsed.type
+    }));
+  });
+
+  Object.keys(c.manual || {}).forEach(function (name) {
+    const res = G.isin.setManual(name, c.manual[name]);
+    if (!res.ok) throw new Error('Bad manual ISIN for ' + name + ': ' + res.error);
+  });
+  G.isin.applyToLedger(ledger);
+
+  Object.keys(c.overrides || {}).forEach(function (name) {
+    G.itr.overrideByName(name, c.overrides[name]);
+  });
+
+  const events = G.itr.buildEvents(ledger);
+  const rows = G.itr.project(events, {});
+  const fys = G.itr.fyOptions(rows);
+  const fy = c.fy != null ? c.fy : (fys.length ? fys[fys.length - 1] : null);
+
+  const counts = { '112A': 0, '111A': 0 };
+  rows.forEach(function (r) {
+    if (r.section) counts[r.section] += 1;
+  });
+
+  const scoped = fy == null ? rows : rows.filter(function (r) { return r.fy === fy; });
+
+  return {
+    fyOptions: fys,
+    fy: fy,
+    counts: counts,
+    blocking: rows.filter(function (r) { return G.itr.isBlocking(r); }).length,
+    outOfScope: scoped.filter(function (r) { return !r.section && !r.excluded; }).length,
+    outOfScopeReasons: scoped.filter(function (r) { return !r.section && !r.excluded; }).map(function (r) {
+      return r.excludeReason || 'Not eligible';
+    }),
+    rows: rows.filter(function (r) { return r.section; }).map(function (r) {
+      return {
+        instrument: r.instrument,
+        section: r.section,
+        fy: r.fy,
+        acquiredCode: r.acquiredCode,
+        transferredCode: r.transferredCode,
+        saleValue: round2(r.sellValue),
+        actualCost: round2(r.actualCost),
+        deemedCost: round2(r.costWithoutIndexation),
+        transferExpenses: round2(r.transferExpenses),
+        gain: r.gain == null ? null : round2(r.gain),
+        excluded: r.excluded,
+        flags: r.flags.slice()
+      };
+    }),
+    csv112A: fy == null ? '' : G.itr.csv112A(rows, fy),
+    csv111A: fy == null ? '' : G.itr.csv111A(rows, fy),
+    print: fy == null ? '' : G.export.printView(G.itr.printSpec(fy, {
+      rows: rows,
+      result: null,
+      settings: c.settings || {}
+    }))
+  };
+}
+
+function validateItr(c, observed) {
+  const failures = [];
+  const e = c.expect || {};
+
+  if (e.fyOptions) {
+    compare('fyOptions', JSON.stringify(observed.fyOptions), JSON.stringify(e.fyOptions), null, failures);
+  }
+  if (e.blocking != null) compare('blocking', observed.blocking, e.blocking, null, failures);
+  if (e.outOfScope != null) compare('outOfScope', observed.outOfScope, e.outOfScope, null, failures);
+  if (e.outOfScopeReason && !observed.outOfScopeReasons.some(function (r) {
+    return r.indexOf(e.outOfScopeReason) >= 0;
+  })) {
+    failures.push('outOfScopeReason: no row carries ' + JSON.stringify(e.outOfScopeReason));
+  }
+
+  Object.keys(e.counts || {}).forEach(function (section) {
+    compare('counts.' + section, observed.counts[section] || 0, e.counts[section], null, failures);
+  });
+
+  (e.rows || []).forEach(function (expected) {
+    const actual = observed.rows.filter(function (row) {
+      return row.instrument === expected.instrument;
+    })[0];
+    if (!actual) {
+      failures.push('rows[' + expected.instrument + ']: not found');
+      return;
+    }
+    ['section', 'fy', 'acquiredCode', 'transferredCode', 'saleValue', 'actualCost', 'deemedCost', 'transferExpenses', 'gain', 'excluded'].forEach(function (key) {
+      if (expected[key] !== undefined) {
+        compare('rows[' + expected.instrument + '].' + key, actual[key], expected[key], key === 'section' || key === 'fy' || key === 'acquiredCode' || key === 'transferredCode' || key === 'excluded' ? null : NUM_TOL, failures);
+      }
+    });
+  });
+
+  Object.keys(e.flags || {}).forEach(function (name) {
+    const actual = observed.rows.filter(function (row) { return row.instrument === name; })[0];
+    if (!actual) {
+      failures.push('flags[' + name + ']: row not found');
+      return;
+    }
+    e.flags[name].forEach(function (flag) {
+      if (actual.flags.indexOf(flag) < 0) {
+        failures.push('flags[' + name + ']: missing ' + flag + ' (got ' + actual.flags.join(', ') + ')');
+      }
+    });
+  });
+
+  [['csv112A', 'Share/Unit acquired(1a)'], ['csv111A', 'Financial year']].forEach(function (pair) {
+    const key = pair[0];
+    if (!e[key]) return;
+    const lines = String(observed[key]).split('\r\n').filter(function (line) {
+      return line !== '';
+    });
+    const header = lines.shift() || '';
+    if (header.indexOf(pair[1]) < 0) {
+      failures.push(key + ': unexpected header ' + JSON.stringify(header));
+    }
+    if (key === 'csv112A' && header.indexOf('Balance(14) = 6 - 13') < 0) {
+      failures.push(key + ': header is missing the 112A Balance(14) column');
+    }
+    const expected = e[key].join('\r\n') + '\r\n';
+    const body = lines.length ? lines.join('\r\n') + '\r\n' : '';
+    compare(key, body, expected, null, failures);
+  });
+
+  (e.printInclude || []).forEach(function (needle) {
+    if (String(observed.print).indexOf(needle) < 0) failures.push('print: missing ' + JSON.stringify(needle));
+  });
+
+  return failures;
+}
+
+function runItrSuite(show) {
+  const file = path.join(FIXTURES, 'itr-cases.json');
+  if (!fs.existsSync(file)) return 0;
+  const spec = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const cases = spec.cases || [];
+  let failed = 0;
+
+  cases.forEach(function (c) {
+    let observed;
+    try {
+      observed = runItrCase(loadApp(spec.today || '2026-11-16T00:00:00'), c);
+    } catch (err) {
+      failed += 1;
+      console.log('FAIL itr/' + c.name + ' \u2014 threw: ' + err.message);
+      return;
+    }
+
+    if (show) {
+      console.log('CASE itr/' + c.name + ' (' + (c.description || '') + ')');
+      console.log(JSON.stringify(observed, null, 2));
+      return;
+    }
+
+    const failures = validateItr(c, observed);
+    if (failures.length) {
+      failed += 1;
+      console.log('FAIL itr/' + c.name);
+      failures.forEach(function (f) {
+        console.log('  - ' + f);
+      });
+    } else {
+      console.log('ok   itr/' + c.name);
+    }
+  });
+
+  if (show) return 0;
+  console.log('');
+  console.log((cases.length - failed) + '/' + cases.length + ' itr cases passed' + (failed ? ', ' + failed + ' failed' : ''));
+  return failed;
+}
+
 function main() {
   const args = process.argv.slice(2);
   const show = args.indexOf('--show') >= 0;
@@ -371,7 +558,8 @@ function main() {
   console.log('');
   console.log((total - failed) + '/' + total + ' cases passed' + (failed ? ', ' + failed + ' failed' : ''));
   const exportFailed = runExportSuite(false);
-  if (failed || exportFailed) process.exit(1);
+  const itrFailed = runItrSuite(false);
+  if (failed || exportFailed || itrFailed) process.exit(1);
 }
 
 main();

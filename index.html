@@ -49,10 +49,12 @@
     </div>
   </div>
   <main class="window-body">
+    <div id="view-dashboard">
     <div class="toolbar">
       <button id="btn-open" type="button">Open files&hellip;</button>
       <button id="btn-sample" type="button">Load sample data</button>
       <button id="btn-settings" type="button">Tax settings&hellip;</button>
+      <button id="btn-itr" type="button">Export ITR&hellip;</button>
       <button id="btn-share" type="button">Share&hellip;</button>
       <button id="btn-clear" type="button">Clear all</button>
       <span class="toolbar-hint">Files are processed in your browser only &mdash; nothing is uploaded or saved.</span>
@@ -138,6 +140,41 @@
         <p class="note" id="chart-note"></p>
       </fieldset>
     </div>
+    </div>
+
+    <section id="view-itr" class="hidden" aria-labelledby="itr-heading">
+      <div class="itr-head">
+        <button id="itr-back" type="button">&larr; Back to dashboard</button>
+        <h2 id="itr-heading">ITR capital-gains export</h2>
+        <span class="spacer"></span>
+        <label for="itr-fy">Financial year</label>
+        <select id="itr-fy"></select>
+      </div>
+
+      <div class="itr-tabs" role="tablist" aria-label="Capital-gains schedule">
+        <button id="itr-tab-112a" type="button" role="tab" aria-selected="true" class="active">112A &mdash; long-term</button>
+        <button id="itr-tab-111a" type="button" role="tab" aria-selected="false">111A &mdash; short-term</button>
+      </div>
+
+      <div class="cards" id="itr-cards"></div>
+
+      <fieldset>
+        <legend>Review rows</legend>
+        <div class="table-scroll"><table class="pnl" id="itr-table"></table></div>
+        <p class="note" id="itr-reconcile"></p>
+        <p class="note hidden" id="itr-ack-wrap">
+          <label><input type="checkbox" id="itr-ack"> I understand the difference from the dashboard and want to download anyway.</label>
+        </p>
+        <div id="itr-exclusions"></div>
+      </fieldset>
+
+      <div class="itr-actions">
+        <button id="itr-download" type="button">Download 112A CSV</button>
+        <button id="itr-print" type="button">Print CA summary</button>
+        <span class="spacer"></span>
+      </div>
+      <p class="note" id="itr-note"></p>
+    </section>
 
     <footer class="app-footer">
       <p>Kapital is an independent, unofficial tool. Not affiliated with Groww. Tax figures are estimates &mdash; verify with your chartered accountant before filing.</p>
@@ -217,6 +254,7 @@
 <script src="js/ledger.js"></script>
 <script src="js/isin-map.js"></script>
 <script src="js/calc.js"></script>
+<script src="js/itr.js"></script>
 <script src="js/samples.js"></script>
 <script src="js/charts.js"></script>
 <script src="js/harvest.js"></script>

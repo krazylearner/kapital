@@ -1,0 +1,110 @@
+{
+  "today": "2026-11-16T00:00:00",
+  "cases": [
+    {
+      "name": "legacy-roundtrips",
+      "description": "pre-Jul-2024 roundtrips: one ST (111A) and one LT (112A) row",
+      "files": ["tests/fixtures/equity-legacy.csv"],
+      "expect": {
+        "fyOptions": [2023],
+        "counts": { "112A": 1, "111A": 1 },
+        "blocking": 0,
+        "rows": [
+          {
+            "instrument": "Alpha Ltd",
+            "section": "111A",
+            "acquiredCode": "AE",
+            "transferredCode": "BE",
+            "saleValue": 15000,
+            "actualCost": 10000,
+            "transferExpenses": 20,
+            "gain": 4980
+          },
+          {
+            "instrument": "Beta Ltd",
+            "section": "112A",
+            "acquiredCode": "AE",
+            "transferredCode": "BE",
+            "saleValue": 20000,
+            "actualCost": 10000,
+            "transferExpenses": 30,
+            "gain": 9970
+          }
+        ],
+        "csv112A": [
+          "AE,BE,INNOTREQUIRD,CONSOLIDATED,,,20000,10000,10000,,,,30,10030,9970"
+        ],
+        "csv111A": [
+          "FY 2023-24,Legacy (transfer before 23 Jul 2024),INE000A01001,Alpha Ltd,100,01/05/2023,01/11/2023,15000,10000,20,4980"
+        ],
+        "printInclude": ["FY 2023-24", "Alpha Ltd", "Beta Ltd", "Estimates only", "112A rows included"]
+      }
+    },
+    {
+      "name": "grandfathering",
+      "description": "pre-2018 lots: FMV above cost, FMV above sale, and missing FMV blocks export",
+      "files": ["tests/fixtures/itr-grandfathering.csv"],
+      "fy": 2024,
+      "overrides": {
+        "Oldco Ltd": { "fmv": 150 },
+        "Cap Ltd": { "fmv": 400 }
+      },
+      "expect": {
+        "fyOptions": [2024],
+        "counts": { "112A": 3, "111A": 0 },
+        "blocking": 1,
+        "flags": { "NoFmv Ltd": ["needs_fmv"] },
+        "rows": [
+          {
+            "instrument": "Oldco Ltd",
+            "acquiredCode": "BE",
+            "transferredCode": "AE",
+            "saleValue": 40000,
+            "actualCost": 10000,
+            "deemedCost": 15000,
+            "transferExpenses": 50,
+            "gain": 24950
+          },
+          {
+            "instrument": "Cap Ltd",
+            "acquiredCode": "BE",
+            "saleValue": 25000,
+            "actualCost": 30000,
+            "deemedCost": 30000,
+            "gain": -5000
+          }
+        ],
+        "csv112A": [
+          "BE,AE,INE111A01011,Oldco Ltd,100,400,40000,15000,10000,15000,150,15000,50,15050,24950",
+          "BE,AE,INE222A01012,Cap Ltd,100,250,25000,30000,30000,25000,400,40000,0,30000,-5000"
+        ]
+      }
+    },
+    {
+      "name": "fy-split",
+      "description": "FY 2024-25 sales either side of 23 Jul 2024 stay in separate 1b buckets",
+      "files": ["tests/fixtures/itr-fy-split.csv"],
+      "expect": {
+        "fyOptions": [2024],
+        "counts": { "112A": 2, "111A": 0 },
+        "blocking": 0,
+        "csv112A": [
+          "AE,BE,INNOTREQUIRD,CONSOLIDATED,,,20000,10000,10000,,,,0,10000,10000",
+          "AE,AE,INNOTREQUIRD,CONSOLIDATED,,,30000,10000,10000,,,,0,10000,20000"
+        ]
+      }
+    },
+    {
+      "name": "debt-excluded",
+      "description": "debt mutual funds are not 112A/111A and are listed as out of scope",
+      "files": ["tests/fixtures/debt-mf.csv"],
+      "expect": {
+        "fyOptions": [],
+        "counts": { "112A": 0, "111A": 0 },
+        "blocking": 0,
+        "outOfScope": 2,
+        "outOfScopeReason": "Debt mutual funds are reported in Schedule CG, not 112A/111A"
+      }
+    }
+  ]
+}

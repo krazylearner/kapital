@@ -532,6 +532,37 @@
         ? bad + ' file(s) could not be parsed'
         : 'Ready';
     $('status-files').textContent = total + ' file(s) loaded';
+    if (G.itr) G.itr.onData();
+  }
+
+  function setView(view, options) {
+    const opts = options || {};
+    const isItr = view === 'itr';
+    const itrView = $('view-itr');
+    const dash = $('view-dashboard');
+    if (!itrView || !dash) return;
+
+    itrView.classList.toggle('hidden', !isItr);
+    dash.classList.toggle('hidden', isItr);
+    document.title = isItr
+      ? 'ITR export \u2014 Kapital'
+      : 'Kapital \u2014 Groww P&L & Capital Gains Analyzer';
+
+    if (isItr) {
+      if (!state.result || state.result.empty) {
+        $('status').textContent = 'Load your Groww exports first, then open Export ITR.';
+      }
+      if (G.itr) G.itr.show();
+    }
+
+    if (opts.updateHash !== false && window.history && window.history.pushState) {
+      const base = window.location.pathname + window.location.search;
+      const hasHash = window.location.hash === '#itr';
+      if (isItr && !hasHash) window.history.pushState({ view: 'itr' }, '', base + '#itr');
+      if (!isItr && hasHash) window.history.pushState({ view: 'dashboard' }, '', base);
+    }
+
+    window.scrollTo(0, 0);
   }
 
   function handleFiles(fileList) {
@@ -617,6 +648,18 @@
         return;
       }
       G.share.show(state.result);
+    });
+
+    $('btn-itr').addEventListener('click', function () {
+      if (!state.result || state.result.empty) {
+        $('status').textContent = 'Load some files first to build an ITR export.';
+        return;
+      }
+      setView('itr');
+    });
+
+    window.addEventListener('popstate', function () {
+      setView(window.location.hash === '#itr' ? 'itr' : 'dashboard', { updateHash: false });
     });
 
     $('settings-x').addEventListener('click', function () {
@@ -744,7 +787,19 @@
     }
   }
 
+  G.app = {
+    state: state,
+    result: function () { return state.result; },
+    ledger: function () { return state.ledger; },
+    settings: function () { return state.settings; },
+    files: function () { return state.files; },
+    rebuild: rebuild,
+    render: render,
+    showView: setView
+  };
+
   bindEvents();
   render();
   autoLoadDemo();
+  if (window.location.hash === '#itr') setView('itr', { updateHash: false });
 })();
