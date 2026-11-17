@@ -1,0 +1,133 @@
+{
+  "cases": [
+    {
+      "name": "csv-formats-dates-and-numbers",
+      "description": "DD/MM/YYYY, plain numbers, no currency or thousands separators, no BOM",
+      "mode": "csv",
+      "schema": {
+        "templateVersion": "test-1",
+        "columns": [
+          { "key": "isin", "header": "ISIN" },
+          { "key": "name", "header": "Security name" },
+          { "key": "buyDate", "header": "Buy date", "type": "date" },
+          { "key": "sellDate", "header": "Sell date", "type": "date" },
+          { "key": "qty", "header": "Qty", "type": "number", "decimals": 3 },
+          { "key": "gain", "header": "Gain", "type": "number" }
+        ]
+      },
+      "rows": [
+        {
+          "isin": "INE009A01021",
+          "name": "Infosys Ltd",
+          "buyDate": "2016-04-01",
+          "sellDate": "2026-02-10",
+          "qty": 10,
+          "gain": 12345.678
+        },
+        {
+          "isin": "",
+          "name": "Parag Parikh Flexi Cap Fund, Direct Plan",
+          "buyDate": "2024-07-23",
+          "sellDate": "23/03/2026",
+          "qty": 12.5,
+          "gain": -250.5
+        }
+      ],
+      "expectLines": [
+        "ISIN,Security name,Buy date,Sell date,Qty,Gain",
+        "INE009A01021,Infosys Ltd,01/04/2016,10/02/2026,10,12345.68",
+        ",\"Parag Parikh Flexi Cap Fund, Direct Plan\",23/07/2024,23/03/2026,12.5,-250.5"
+      ],
+      "expectNoBom": true
+    },
+    {
+      "name": "csv-quotes-only-when-needed",
+      "description": "Quote comma, quote and newline cells; leave plain cells bare",
+      "mode": "csv",
+      "schema": [
+        { "key": "name", "header": "Name" },
+        { "key": "note", "header": "Note" }
+      ],
+      "rows": [
+        { "name": "A, B \"C\"\nD", "note": "plain" },
+        { "name": "No quoting needed", "note": "spaced" },
+        { "name": "Semi;colon", "note": "plain" },
+        { "name": "", "note": "" }
+      ],
+      "expectLines": [
+        "Name,Note",
+        "\"A, B \"\"C\"\"\nD\",plain",
+        "No quoting needed,spaced",
+        "Semi;colon,plain",
+        ","
+      ]
+    },
+    {
+      "name": "print-view-a4-and-escaping",
+      "description": "Self-contained A4 print document with escaped title and schema table",
+      "mode": "print",
+      "title": "112A <summary>",
+      "subtitle": "FY 2025-26",
+      "meta": [["Records", "2"]],
+      "sections": [
+        {
+          "title": "Long-term",
+          "columns": [
+            { "key": "isin", "header": "ISIN" },
+            { "key": "gain", "header": "Gain", "type": "number" }
+          ],
+          "rows": [{ "isin": "INE009A01021", "gain": 100.5 }]
+        }
+      ],
+      "notes": ["Estimates only."],
+      "footer": "Not a certificate.",
+      "expectInclude": [
+        "<!doctype html>",
+        "<title>112A &lt;summary&gt;</title>",
+        "<h1>112A &lt;summary&gt;</h1>",
+        "FY 2025-26",
+        "<th scope=\"col\">ISIN</th>",
+        "<td class=\"num\">100.5</td>",
+        "@page { size: A4 portrait;",
+        "Estimates only.",
+        "Not a certificate."
+      ],
+      "expectExclude": ["<script"]
+    },
+    {
+      "name": "workbook-sheets",
+      "description": "Sheet names, header rows, numeric and date cell types",
+      "mode": "workbook",
+      "sheets": [
+        {
+          "name": "112A",
+          "columns": [
+            { "key": "isin", "header": "ISIN" },
+            { "key": "sellDate", "header": "Sell date", "type": "date" },
+            { "key": "gain", "header": "Gain", "type": "number" }
+          ],
+          "rows": [{ "isin": "INE009A01021", "sellDate": "2026-02-10", "gain": 100.5 }]
+        },
+        {
+          "name": "Summary",
+          "columns": [
+            { "key": "label", "header": "Metric" },
+            { "key": "value", "header": "Value" }
+          ],
+          "rows": [{ "label": "Rows", "value": 1 }]
+        }
+      ],
+      "expectSheetNames": ["112A", "Summary"],
+      "expectSheets": {
+        "112A": [
+          ["ISIN", "Sell date", "Gain"],
+          ["INE009A01021", "10/02/2026", 100.5]
+        ],
+        "Summary": [
+          ["Metric", "Value"],
+          ["Rows", "1"]
+        ]
+      }
+    }
+  ]
+}

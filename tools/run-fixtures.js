@@ -8,7 +8,7 @@ const vm = require('vm');
 const ROOT = path.resolve(__dirname, '..');
 const FIXTURES = path.join(ROOT, 'tests', 'fixtures');
 const CASES = path.join(FIXTURES, 'cases.json');
-const SCRIPTS = ['js/csv.js', 'js/samples.js', 'js/parsers.js', 'js/ledger.js', 'js/isin-map.js', 'js/calc.js'];
+const SCRIPTS = ['js/csv.js', 'js/export.js', 'js/samples.js', 'js/parsers.js', 'js/ledger.js', 'js/isin-map.js', 'js/calc.js'];
 const NUM_TOL = 0.01;
 const XIRR_TOL = 1e-6;
 
@@ -25,10 +25,31 @@ function fixedDateClass(iso) {
   };
 }
 
+function xlsxStub() {
+  return {
+    utils: {
+      book_new: function () {
+        return { SheetNames: [], Sheets: {} };
+      },
+      aoa_to_sheet: function (rows) {
+        return { rows: rows };
+      },
+      book_append_sheet: function (wb, ws, name) {
+        wb.SheetNames.push(name);
+        wb.Sheets[name] = ws;
+      }
+    },
+    write: function () {
+      return new Uint8Array(0);
+    }
+  };
+}
+
 function loadApp(today) {
   const sandbox = { window: {}, console };
   vm.createContext(sandbox);
   sandbox.Date = fixedDateClass(today);
+  sandbox.window.XLSX = xlsxStub();
   SCRIPTS.forEach(function (rel) {
     const file = path.join(ROOT, rel);
     vm.runInContext(fs.readFileSync(file, 'utf8'), sandbox, { filename: rel });
@@ -211,6 +232,94 @@ function validate(c, observed) {
   return failures;
 }
 
+function runExportCase(G, c) {
+  if (c.mode === 'print') {
+    return { text: G.export.printView(c) };
+  }
+  if (c.mode === 'workbook') {
+    const wb = G.export.workbook(c.sheets);
+    const sheets = {};
+    wb.SheetNames.forEach(function (name) {
+      sheets[name] = wb.Sheets[name].rows;
+    });
+    return { sheetNames: wb.SheetNames.slice(), sheets: sheets };
+  }
+  return { text: G.export.csv(c.rows, c.schema, c.options || {}) };
+}
+
+function validateExport(c, observed) {
+  const failures = [];
+
+  if (c.expectLines) {
+    compare('csv', observed.text, c.expectLines.join('\r\n') + '\r\n', null, failures);
+  }
+  (c.expectInclude || []).forEach(function (needle) {
+    if (String(observed.text).indexOf(needle) < 0) failures.push('print: missing ' + JSON.stringify(needle));
+  });
+  (c.expectExclude || []).forEach(function (needle) {
+    if (String(observed.text).indexOf(needle) >= 0) failures.push('print: unexpected ' + JSON.stringify(needle));
+  });
+  if (c.expectNoBom && String(observed.text).charCodeAt(0) === 0xfeff) {
+    failures.push('csv: unexpected UTF-8 BOM');
+  }
+  if (c.expectSheetNames) {
+    compare('sheetNames', JSON.stringify(observed.sheetNames), JSON.stringify(c.expectSheetNames), null, failures);
+  }
+  Object.keys(c.expectSheets || {}).forEach(function (name) {
+    compare(
+      'sheets[' + name + ']',
+      JSON.stringify(observed.sheets ? observed.sheets[name] : null),
+      JSON.stringify(c.expectSheets[name]),
+      null,
+      failures
+    );
+  });
+
+  return failures;
+}
+
+function runExportSuite(show) {
+  const file = path.join(FIXTURES, 'export-cases.json');
+  if (!fs.existsSync(file)) return 0;
+  const spec = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const G = loadApp(spec.today || '2026-11-16T00:00:00');
+  const cases = spec.cases || [];
+  let failed = 0;
+
+  cases.forEach(function (c) {
+    let observed;
+    try {
+      observed = runExportCase(G, c);
+    } catch (err) {
+      failed += 1;
+      console.log('FAIL export/' + c.name + ' \u2014 threw: ' + err.message);
+      return;
+    }
+
+    if (show) {
+      console.log('CASE export/' + c.name + ' (' + (c.description || '') + ')');
+      console.log(JSON.stringify(observed, null, 2));
+      return;
+    }
+
+    const failures = validateExport(c, observed);
+    if (failures.length) {
+      failed += 1;
+      console.log('FAIL export/' + c.name);
+      failures.forEach(function (f) {
+        console.log('  - ' + f);
+      });
+    } else {
+      console.log('ok   export/' + c.name);
+    }
+  });
+
+  if (show) return 0;
+  console.log('');
+  console.log((cases.length - failed) + '/' + cases.length + ' export cases passed' + (failed ? ', ' + failed + ' failed' : ''));
+  return failed;
+}
+
 function main() {
   const args = process.argv.slice(2);
   const show = args.indexOf('--show') >= 0;
@@ -261,7 +370,8 @@ function main() {
   const total = cases.length;
   console.log('');
   console.log((total - failed) + '/' + total + ' cases passed' + (failed ? ', ' + failed + ' failed' : ''));
-  if (failed) process.exit(1);
+  const exportFailed = runExportSuite(false);
+  if (failed || exportFailed) process.exit(1);
 }
 
 main();
